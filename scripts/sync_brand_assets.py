@@ -23,6 +23,8 @@ def read_env():
                 k, v = line.split("=", 1); env[k.strip()] = v.strip()
     return env
 
+PUBLIC_LOGO_DIRS = {"ssclinic": "02_logo_ssClinic"}  # logos kept under static/public/brand/logos when a product has none
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--root"); ap.add_argument("--out", help="override output root (default: repo root)")
@@ -37,9 +39,13 @@ def main():
         src = products / slug
         dst = out_root / "brands" / slug
         (dst / "design-system").mkdir(parents=True, exist_ok=True)
-        if not src.is_dir():
-            report.append((slug, "MISSING in design system")); continue
         n = 0
+        pub = root / "static" / "public" / "brand" / "logos" / PUBLIC_LOGO_DIRS.get(slug, "")
+        if slug in PUBLIC_LOGO_DIRS and pub.is_dir():
+            shutil.copytree(pub, dst / "design-system" / "logos", dirs_exist_ok=True)
+            n += sum(1 for _ in pub.rglob("*") if _.is_file())
+        if not src.is_dir():
+            report.append((slug, f"{n} files (no product folder)" if n else "MISSING in design system")); continue
         for sub in ("logos", "downloads"):
             if (src / sub).is_dir():
                 shutil.copytree(src / sub, dst / "design-system" / sub, dirs_exist_ok=True)

@@ -77,17 +77,43 @@
   ],
   "claims_status": "TBC - no claims guidance supplied",
   "doctor_consent_ref": null,
-  "doctor_allowed_in_ads": "NO: guideline says do not show or name individual doctors in brand material",
+  "doctor_allowed_in_ads": "yes, for educational videos, as a lower third only (name and title), and only doctors from SS Clinic. Head of Creative decision 2026-10-16; replaces guideline v1.0 line 'do not show or name individual doctors'.",
   "slug": "ssclinic",
   "source": "SuamiSihat Design System repo (static/products/<slug>/metadata.json, docs/claims-review/README.md and audit-2026-10-13.md), plus brand guideline v1.0 PDFs (16 Oct 2026)",
   "gate": {
-    "enforce_doctor_consent": true,
-    "block_on_banned_terms": true
+    "enforce_doctor_consent": false,
+    "block_on_banned_terms": true,
+    "require_appointed_doctor": true
   },
   "staff_claims_review": [
     "Permanently blacklisted SS Clinic copy (brand-voice.md, SSC-STR-001): 'Mati pucuk', 'Lemah batin', 'Pancut awal', 'Keras dalam 1 sesi!'",
     "Prescription medicines (e.g. tadalafil under ANDROLAB RX) cannot be advertised to the public in Malaysia; keep RX content internal",
     "Compliant alternatives: 'Penurunan tenaga lelaki', 'Kesihatan intim lelaki', 'Vitaliti suami', 'Stamina dan daya tahan'",
     "Use 'semulajadi', not 'fitrah', in ad copy"
-  ]
+  ],
+  "appointed_doctors": [
+    "Dr Rak"
+  ],
+  "doctor_lower_third": "Dr Rak, Men's Health Doctor",
+  "decision_log": [
+    {
+      "date": "2026-10-16",
+      "decided_by": "Head of Creative (Muhammad Harussani Adul Manap)",
+      "decision": "Allow doctor on screen for SS Clinic educational videos, with a lower third \"Dr Rak, Men's Health Doctor\". Only doctors from SS Clinic may appear. Dr Rak is head of doctors at SuamiSihat Healthcare Sdn Bhd.",
+      "unchanged": "banned_terms, review_terms and the claims review (TBC) still apply. End card line: 'Kami Check & Rawat'.",
+      "open": "Guideline v1.0 still says do not show or name individual doctors; update it so it matches. Doctor consent reference not on file."
+    },
+    {
+      "date": "2026-10-16",
+      "decided_by": "Head of Creative (Muhammad Harussani Adul Manap)",
+      "decision": "Guideline wording to read: only doctors from SS Clinic are allowed in SS Clinic videos. The engine now enforces this through appointed_doctors."
+    }
+  ],
+  "standing_notice": "SS Clinic decision log 2026-10-16: Dr Rak allowed in educational videos (lower third, SS Clinic doctors only). The brand guideline v1.0 still says no individual doctors; claims guidance is still TBC.",
+  "end_card_line": "Kami Check & Rawat",
+  "logo_files": {
+    "on_light_background": "design-system/logos/logo_ssc_primary_light.svg (navy and light blue)",
+    "on_dark_background": "design-system/logos/logo_ssc_primary_dark.svg (white text, bright blue mark)",
+    "note": "file names follow the design system: 'light' = for light backgrounds, 'dark' = for dark backgrounds"
+  }
 }
