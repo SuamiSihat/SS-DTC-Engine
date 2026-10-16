@@ -1,0 +1,81 @@
+{
+  "name": "MENSS",
+  "type": "product",
+  "ads_allowed": true,
+  "language": "Modern, direct; BM/English not specified",
+  "entity": "05-SSE SuamiSihat E-Commerce with 02-SSC SS Clinic",
+  "product_facts": [
+    "Range: FRESH Wash (personal care), Penile Pump (vacuum device, integrated with SS Clinic doctor-supervised protocols), Ring Series (silicone rings), Noctis and Scensual (in development, no approved assets)",
+    "Trademark: TBC"
+  ],
+  "colors": {
+    "carbon_obsidian": "#030404",
+    "pure_white": "#FEFEFE",
+    "precision_cyan": "#0E92CC",
+    "cyan_text": "#0B6F9C"
+  },
+  "color_rules": [
+    "60:30:10 (black foundation, cyan structure, white accent)",
+    "White on Precision Cyan is 3.5:1; use black text on cyan buttons",
+    "Do not use cyan for body text on light backgrounds"
+  ],
+  "fonts": {
+    "display": "Poppins SemiBold / Bold; Montserrat for subtitles and labels",
+    "body": "Helvetica Neue (print), Inter (web), Calibri (Office)"
+  },
+  "logo": {
+    "files": [
+      "logo_menss.svg"
+    ],
+    "rules": [
+      "White wordmark on Carbon",
+      "Do not place the logo on photographs without a solid panel",
+      "Clear space = cap height; min 90 px / 22 mm wide",
+      "Pump packaging uses the Pump sub-brand mark"
+    ]
+  },
+  "graphic_device": "Precision Lines (pattern.svg): fine diagonal cyan lines on Carbon, line weight/opacity never above 50%, copy on solid areas",
+  "photography": "Direction TBC",
+  "voice": [
+    "Modern and direct",
+    "Discreet, never crude",
+    "Helpful and step-by-step"
+  ],
+  "avoid": [
+    "Explicit imagery or innuendo",
+    "Treatment claims for devices",
+    "Size or performance promises"
+  ],
+  "banned_terms": [],
+  "review_terms": [
+    "besar",
+    "cure",
+    "kuat",
+    "medical grade",
+    "medical-grade",
+    "performance",
+    "prestasi",
+    "rawat",
+    "saiz",
+    "sembuh",
+    "size",
+    "tahan lama",
+    "treatment",
+    "vascular rehabilitation"
+  ],
+  "claims_status": "TBC - no claims guidance supplied",
+  "doctor_consent_ref": null,
+  "doctor_allowed_in_ads": "not addressed; check with SS Clinic rules",
+  "slug": "menss",
+  "source": "SuamiSihat Design System repo (static/products/<slug>/metadata.json, docs/claims-review/README.md and audit-2026-10-13.md), plus brand guideline v1.0 PDFs (16 Oct 2026)",
+  "gate": {
+    "enforce_doctor_consent": true,
+    "block_on_banned_terms": true
+  },
+  "staff_claims_review": [
+    "Device descriptions such as 'medical-grade' or 'vascular rehabilitation' need registration evidence before public use"
+  ],
+  "planned": [
+    "White-label MENSS ring in blue, using the same ring tooling (FAI AMS-26043, which is marked MENSS). Future plan, no approved assets yet."
+  ]
+}

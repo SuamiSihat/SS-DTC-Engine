@@ -1,0 +1,70 @@
+{
+  "name": "Mensculine",
+  "type": "product",
+  "ads_allowed": true,
+  "language": "International English",
+  "entity": "05-SSE SuamiSihat E-Commerce (international)",
+  "product_facts": [
+    "Export and cross-border marketplaces",
+    "Lead product: Mensculine Care Cream (topical)",
+    "Trademark: TBC"
+  ],
+  "colors": {
+    "obsidian_black": "#1C1C1C",
+    "light_surface": "#F1F1F1",
+    "white": "#FFFFFF",
+    "vivid_blue": "#038AFA",
+    "blue_text": "#0068C9"
+  },
+  "color_rules": [
+    "60:30:10 (black foundation, light/white structure, vivid blue accent)",
+    "White on Vivid Blue is only 3.5:1; use Obsidian text on blue",
+    "Vivid Blue only for the icon and one highlight on black"
+  ],
+  "fonts": {
+    "display": "Poppins SemiBold / Bold; Montserrat for subtitles and labels",
+    "body": "Helvetica Neue (print), Inter (web), Calibri (Office)"
+  },
+  "logo": {
+    "files": [
+      "logo_mensculine_primary.svg",
+      "light and dark lockups, secondary compact, text lockup"
+    ],
+    "rules": [
+      "Use light or dark lockup to match background; never mix",
+      "Never recolour the icon; never retype the wordmark",
+      "Do not use the archived Xprimal identity",
+      "Clear space = wordmark cap height; min 120 px / 30 mm wide"
+    ]
+  },
+  "graphic_device": "Chevron Drive (pattern.svg): dark bands and packaging sides, copy on solid panels, do not rotate",
+  "photography": "Direction TBC (product photography pending)",
+  "voice": [
+    "Confident, concise",
+    "International English",
+    "Practical"
+  ],
+  "avoid": [
+    "Market-specific claims that are not cleared",
+    "Slang or local idioms",
+    "Explicit imagery"
+  ],
+  "banned_terms": [],
+  "review_terms": [
+    "cure",
+    "guarantee",
+    "miracle"
+  ],
+  "claims_status": "TBC - no claims guidance supplied",
+  "doctor_consent_ref": null,
+  "doctor_allowed_in_ads": "not addressed in guideline; ask brand owner",
+  "slug": "mensculine",
+  "source": "SuamiSihat Design System repo (static/products/<slug>/metadata.json, docs/claims-review/README.md and audit-2026-10-13.md), plus brand guideline v1.0 PDFs (16 Oct 2026)",
+  "gate": {
+    "enforce_doctor_consent": true,
+    "block_on_banned_terms": true
+  },
+  "staff_claims_review": [
+    "Ingredient and effect statements must follow each export market's cosmetic rules"
+  ]
+}

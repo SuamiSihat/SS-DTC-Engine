@@ -1,0 +1,61 @@
+{
+  "name": "PERTABI",
+  "type": "partner_ngo",
+  "ads_allowed": false,
+  "language": "Bahasa Melayu first",
+  "entity": "Persatuan Taat Bersama Isteri Malaysia, society PPM-023-10-15122021 (partner network, not a SuamiSihat product)",
+  "product_facts": [
+    "Official jersey merchandise",
+    "Motto: Taat Setia Progresif"
+  ],
+  "colors": {
+    "pertabi_navy": "#1D3464",
+    "white": "#FFFFFF",
+    "sky_blue": "#66BED8"
+  },
+  "color_rules": [
+    "Sky Blue only on navy; on white use PERTABI Navy for text"
+  ],
+  "fonts": {
+    "display": "Poppins SemiBold / Bold; Montserrat for subtitles",
+    "body": "Helvetica Neue / Inter / Calibri"
+  },
+  "logo": {
+    "files": [
+      "logo_pertabi_horizontal-light.svg",
+      "logo_pertabi_horizontal-dark.svg",
+      "logo_pertabi_vertical.svg"
+    ],
+    "rules": [
+      "Do not modify the crest",
+      "Do not place on busy photography",
+      "Use society's full name on first mention; SuamiSihat as 'supported by'",
+      "Min 120 px / 30 mm wide"
+    ]
+  },
+  "graphic_device": "Togetherness Rings (pattern.svg), text on solid navy; co-branded material needs PERTABI approval",
+  "photography": "Direction TBC",
+  "voice": [
+    "Warm, communal",
+    "Bahasa Melayu first",
+    "Respectful"
+  ],
+  "avoid": [
+    "Using PERTABI to sell products",
+    "Altering the society's logo",
+    "Implying PERTABI endorses specific products",
+    "Using PERTABI in product advertising"
+  ],
+  "banned_terms": [],
+  "review_terms": [],
+  "claims_status": "TBC",
+  "doctor_consent_ref": null,
+  "doctor_allowed_in_ads": "n/a",
+  "note": "Not a product brand. The engine refuses product-ad batches for this brand; community content needs PERTABI sign-off.",
+  "slug": "pertabi",
+  "source": "SuamiSihat Design System v3.6.1, brand guideline v1.0 (16 Oct 2026)",
+  "gate": {
+    "enforce_doctor_consent": true,
+    "block_on_banned_terms": true
+  }
+}

@@ -1,0 +1,93 @@
+{
+  "name": "SS Clinic",
+  "type": "service",
+  "ads_allowed": true,
+  "language": "Educated, conversational Malay",
+  "entity": "SuamiSihat Clinic Sdn. Bhd.",
+  "product_facts": [
+    "Clinics: Subang Jaya and Kota Bharu",
+    "Consultations, health checks, telehealth, personal care plans",
+    "Approach: check first, assessment before any treatment",
+    "Programmes: ANDROLAB RX; devices: MENSS"
+  ],
+  "colors": {
+    "deep_prussian_navy": "#022057",
+    "pure_white": "#FFFFFF",
+    "clinical_navy": "#0F4C75",
+    "warm_clinic_gold": "#F4A261",
+    "azure_energy": "#21A1F7"
+  },
+  "color_rules": [
+    "60:30:10 (navy foundation, white/clinical navy structure, gold accent)",
+    "Gold on Clinical Navy: large text and shapes only"
+  ],
+  "fonts": {
+    "display": "Poppins SemiBold / Bold",
+    "body": "Inter on the web, 15 px, 1.7 line height"
+  },
+  "logo": {
+    "files": [
+      "02_logo_ssClinic.zip (staff login)"
+    ],
+    "rules": [
+      "Never retype the wordmark; use supplied files",
+      "Text on solid panels, not on busy photos",
+      "Clear space and minimum size still to be confirmed"
+    ]
+  },
+  "graphic_device": "None supplied (TBC)",
+  "photography": "Dignified Malaysian men aged 32 to 55, warm clinic lighting, natural eye contact, health-check equipment in use. Real clinic photography with written consent only.",
+  "voice": [
+    "Warm and brotherly",
+    "Expert and calm",
+    "Educated, conversational Malay"
+  ],
+  "avoid": [
+    "Promises to cure, or to work by a certain time",
+    "False urgency such as countdowns or 'last slots'",
+    "Crude slang or shock headlines",
+    "Comparisons with named clinics",
+    "Treatment-specific taglines until regulatory review",
+    "Images of distressed men or pill bottles",
+    "Showing or naming individual doctors in brand material",
+    "Cure, speed or comparison claims"
+  ],
+  "banned_terms": [
+    "countdown",
+    "fitrah",
+    "keras dalam 1 sesi",
+    "last slot",
+    "last slots",
+    "lemah batin",
+    "mati pucuk",
+    "pancut awal",
+    "slot terakhir",
+    "tadalafil"
+  ],
+  "review_terms": [
+    "sembuh",
+    "cure",
+    "pasti",
+    "jamin",
+    "guarantee",
+    "cepat",
+    "segera",
+    "terbaik",
+    "dr "
+  ],
+  "claims_status": "TBC - no claims guidance supplied",
+  "doctor_consent_ref": null,
+  "doctor_allowed_in_ads": "NO: guideline says do not show or name individual doctors in brand material",
+  "slug": "ssclinic",
+  "source": "SuamiSihat Design System repo (static/products/<slug>/metadata.json, docs/claims-review/README.md and audit-2026-10-13.md), plus brand guideline v1.0 PDFs (16 Oct 2026)",
+  "gate": {
+    "enforce_doctor_consent": true,
+    "block_on_banned_terms": true
+  },
+  "staff_claims_review": [
+    "Permanently blacklisted SS Clinic copy (brand-voice.md, SSC-STR-001): 'Mati pucuk', 'Lemah batin', 'Pancut awal', 'Keras dalam 1 sesi!'",
+    "Prescription medicines (e.g. tadalafil under ANDROLAB RX) cannot be advertised to the public in Malaysia; keep RX content internal",
+    "Compliant alternatives: 'Penurunan tenaga lelaki', 'Kesihatan intim lelaki', 'Vitaliti suami', 'Stamina dan daya tahan'",
+    "Use 'semulajadi', not 'fitrah', in ad copy"
+  ]
+}

@@ -1,0 +1,99 @@
+{
+  "name": "REJAL",
+  "type": "product",
+  "ads_allowed": true,
+  "language": "Bahasa Malaysia first, English second",
+  "entity": "05-SSE distributed by SuamiSihat Ecommerce Sdn Bhd",
+  "product_facts": [
+    "Food (Food Act 1983), never medicine",
+    "Wild Tualang honey, bawang lanang in Tualang honey, stevia",
+    "Trademark TM only, never (R)",
+    "Former name 'Rijal' is retired; do not use",
+    "Honey and bawang lanang declared by weight (g/kg); jar capacity is internal"
+  ],
+  "colors": {
+    "rejal_black": "#231F20",
+    "white": "#FFFFFF",
+    "rejal_black_raised": "#2E2A2B",
+    "rejal_blue": "#4480C2",
+    "rejal_blue_deep": "#2F6DB0",
+    "rejal_blue_light": "#7FAEE0",
+    "heritage_gold": "#C9A24A",
+    "heritage_gold_deep": "#8A6A1F"
+  },
+  "color_rules": [
+    "No green (implies 'organic'; green belongs to Dr. MIT Ring)",
+    "Heritage Gold is a finish only (gold caps, QUALITY SEAL band); never flat yellow, never a UI fill",
+    "White wordmark on Rejal Black; black wordmark on white",
+    "Rejal Blue emblem/ribbon labels are large text only"
+  ],
+  "fonts": {
+    "display": "Bold condensed caps for wordmark and product names (Bebas Neue as digital stand-in); Poppins Medium caps tracked +300 for section labels",
+    "body": "Poppins Regular; label text at least 6 pt"
+  },
+  "logo": {
+    "files": [
+      "rejal-wordmark-white.svg",
+      "rejal-wordmark-black.svg",
+      "rejal-emblem-quality-original-on-dark.svg"
+    ],
+    "rules": [
+      "Do not use old 'Rijal' spelling or (R) next to REJAL",
+      "Never recolour (never green or gold) or stretch the wordmark",
+      "Do not place the emblem on white",
+      "No AI-rendered packaging; no claims next to the logo",
+      "Clear space half letter height; wordmark min 18 mm / 72 px"
+    ]
+  },
+  "graphic_device": "REJAL repeat texture, dark grey #3A3536 on Rejal Black only; never behind the main wordmark or emblem",
+  "photography": "Real product, warm low-key light, dark stone or aged wood, raw ingredients in shot. Cut-outs on white for marketplaces. No AI renders.",
+  "voice": [
+    "Dignified and warm, like a family recipe passed on",
+    "Plain-spoken: ingredients, origin, how to enjoy it",
+    "Bahasa Malaysia first, English second"
+  ],
+  "avoid": [
+    "Medical or sexual-health language (ubat, melancarkan darah, tenaga batin, kuat)",
+    "'Organic' or green 'natural' cues without certification",
+    "Lab numbers or percentages without a report on file",
+    "Using (R) next to REJAL"
+  ],
+  "banned_terms": [
+    "cardiovascular",
+    "diastase",
+    "immunity",
+    "imuniti",
+    "kardiovaskular",
+    "kuat",
+    "melancarkan darah",
+    "nitric oxide",
+    "organic",
+    "organik",
+    "rijal",
+    "sac",
+    "tenaga batin",
+    "tpc",
+    "ubat"
+  ],
+  "review_terms": [
+    "tahan lama",
+    "stamina",
+    "sihat",
+    "penawar",
+    "rawat"
+  ],
+  "claims_status": "TBC - no claims guidance supplied",
+  "doctor_consent_ref": null,
+  "doctor_allowed_in_ads": "avoid medical framing; ask brand owner",
+  "slug": "rejal",
+  "source": "SuamiSihat Design System repo (static/products/<slug>/metadata.json, docs/claims-review/README.md and audit-2026-10-13.md), plus brand guideline v1.0 PDFs (16 Oct 2026)",
+  "gate": {
+    "enforce_doctor_consent": true,
+    "block_on_banned_terms": true
+  },
+  "staff_claims_review": [
+    "Never publish: 'melancarkan darah', 'tenaga batin', immunity, cardiovascular, digestive or nitric-oxide benefits, 'organic', lab values (TPC, diastase, SAC %)",
+    "Describe ingredients, origin and use only",
+    "Labels need kcal/kJ nutrition, real serving size, net weight, infant warning on honey; Halal/MeSTI only from the manufacturer's own valid certificate"
+  ]
+}

@@ -1,0 +1,131 @@
+{
+  "name": "Dr. MIT Ring",
+  "type": "product",
+  "ads_allowed": true,
+  "language": "Bahasa Malaysia first",
+  "entity": "05-SSE SuamiSihat Ecommerce Sdn Bhd",
+  "product_facts": [
+    "MDA-registered male intimacy technology device (Act 737, Path B), update in progress",
+    "Not an ingestible medicine",
+    "2 rings per box, foil sachets, reuse 3 to 5 times",
+    "Credit line: Direka oleh SuamiSihat",
+    "Trademark DR MIT RING (R) TM2023032015 class 10"
+  ],
+  "colors": {
+    "canvas": "#FBFBFB",
+    "dr_mit_lime": "#6AB845",
+    "neutral_black": "#1C1C1C",
+    "deep_green": "#23963B",
+    "deep_green_aa": "#1A7A30",
+    "light_lime": "#ACCF6A",
+    "yellow": "#FFE53B"
+  },
+  "color_rules": [
+    "60:30:10 balance (foundation:structure:accent)",
+    "Never white text on lime (2.45:1) or yellow on lime (1.93:1)",
+    "Text on lime: #1C1C1C",
+    "Lime text on black: OK (6.9:1)",
+    "Yellow only as the count chip, on black only",
+    "White headings on Deep Green only for large text"
+  ],
+  "fonts": {
+    "display": "Poppins ExtraBold / Black",
+    "descriptor": "Poppins SemiBold caps, tracked +240",
+    "body": "Poppins Regular",
+    "note": "Brush-script ad font is retired"
+  },
+  "logo": {
+    "files": [
+      "logo_drmitring.svg (wordmark pill)"
+    ],
+    "rules": [
+      "Place the pill on black, or as a filled black pill on lime",
+      "Never put the transparent pill directly on lime or white",
+      "Never retype, recolour or stretch the wordmark; always use the supplied file",
+      "Clear space: half the pill height; minimum 20 mm / 80 px wide",
+      "Set 'MALE INTIMACY TECHNOLOGY' (or 'M.I.T.') above the pill on packs/listings",
+      "Sign off 'Dr. MIT Ring (R) - Direka oleh SuamiSihat'"
+    ]
+  },
+  "graphic_device": "Ring Ripple pattern (pattern.svg): green panels only, text on solid green or black, max one third of surface, do not rotate/recolour/crop into the logo badge",
+  "photography": "Product-only: packs and ring on clean off-white or textured neutral surfaces. No anatomy, no explicit or suggestive imagery.",
+  "voice": [
+    "Calm and clean, clinical and confident, never crude",
+    "Instructional: short steps, clear care advice",
+    "Bahasa Malaysia first; respectful of both partners"
+  ],
+  "avoid": [
+    "Vulgar or suggestive slang: 'pancut' / 'muntah' wording",
+    "Retired lineage references or unverified patent / medical claims"
+  ],
+  "banned_terms": [
+    "pancut",
+    "muntah",
+    "patented",
+    "paten",
+    "clinically proven",
+    "terbukti secara klinikal",
+    "no side effects",
+    "tiada kesan sampingan",
+    "andrologically tested",
+    "diuji secara andrologi"
+  ],
+  "review_terms": [
+    "venous leakage"
+  ],
+  "claims_status": "TBC - no claims guidance supplied; regulatory sign-off pending",
+  "doctor_consent_ref": null,
+  "doctor_allowed_in_ads": "yes, but only SuamiSihat-appointed doctors (see appointed_doctors). Head of Creative decision, 2026-10-16.",
+  "slug": "drmitring",
+  "source": "SuamiSihat Design System repo (static/products/<slug>/metadata.json, docs/claims-review/README.md and audit-2026-10-13.md), plus brand guideline v1.0 PDFs (16 Oct 2026)",
+  "gate": {
+    "enforce_doctor_consent": false,
+    "require_appointed_doctor": true,
+    "block_on_banned_terms": true
+  },
+  "staff_claims_review": [
+    "Kept as reference only. The engine no longer blocks doctor use or performance wording for DMR (see decision_log).",
+    "Still screened: 'patented', 'clinically proven', 'no side effects', 'andrologically tested' (need test evidence beyond the first-article inspection).",
+    "Design-system metadata: doctor.status = pending_consent, consentRef null; MDA Path B vs Path A wording differs between metadata and claims notes."
+  ],
+  "naming": {
+    "display": "Dr. MIT Ring",
+    "mit_meaning": "M.I.T. stands for Male Intimacy Technology",
+    "rule": "Always write 'Dr. MIT Ring'. Where the name is explained, say M.I.T. = Male Intimacy Technology."
+  },
+  "appointed_doctors": [
+    "Dr Amir"
+  ],
+  "claims_allowed": "Erection, hardness, stamina, 'tahan lama' and similar wording are allowed for DMR ads (Head of Creative decision, 2026-10-16).",
+  "evidence": [
+    {
+      "id": "FAI AMS-26043",
+      "what": "First Article Report, Advance Micro Solutions Sdn Bhd, submitted 6 Oct 2026 for SuamiSihat Ecommerce Sdn Bhd",
+      "supports": [
+        "Material: silicone, non-ESD",
+        "Hardness: 20-25 Shore A",
+        "Colour: green",
+        "Dimensions within tolerance on 10 samples (e.g. diameter 19.30, 32.00, 3.5, 7.30 mm); appearance and flash/burr OK; no recycled material"
+      ],
+      "does_not_support": [
+        "Efficacy, performance or clinical claims",
+        "Safety, biocompatibility or 'no side effects'",
+        "'Andrologically tested', 'clinically proven' or 'patented'"
+      ],
+      "open_points": [
+        "File the signed copy when the customer accept/reject boxes are filled in",
+        "The tooling and drawing carry a MENSS mark because the same ring is planned for a MENSS white-label (blue ring); this part is the ring used for Dr. MIT Ring too"
+      ],
+      "status": "Soft copy before signature; approved by management (per Head of Creative, 2026-10-16). Keep the signed copy on file."
+    }
+  ],
+  "decision_log": [
+    {
+      "date": "2026-10-16",
+      "by": "Head of Creative",
+      "decision": "Doctor-led DMR ads allowed, but only with SuamiSihat-appointed doctors. Performance wording allowed. 'Patented', 'clinically proven', 'no side effects', 'andrologically tested' stay screened.",
+      "note": "Brand guideline v1.0 and the staff claims review still list doctor use and these claims as pending; the engine prints a standing notice."
+    }
+  ],
+  "standing_notice": "DMR decision log 2026-10-16: doctor-led ads allowed for SuamiSihat-appointed doctors only; performance wording allowed. The brand guideline v1.0 and staff claims review still list these as pending."
+}
