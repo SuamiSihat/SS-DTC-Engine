@@ -1,0 +1,22 @@
+{
+  "_note": "Starting values, tune in the first test render then freeze. Look applies to inserts/b-roll only, never the speaker or product.",
+  "default": "insert",
+  "presets": {
+    "insert": {
+      "grade": "film",
+      "grain": 0.04,
+      "bloom": 0.4,
+      "vignette": 0.35,
+      "weave": 1.0,
+      "fade": 0.25
+    },
+    "bw_broll": {
+      "grade": "bw",
+      "grain": 0.045,
+      "bloom": 0.35,
+      "vignette": 0.35,
+      "weave": 1.0,
+      "fade": 0.3
+    }
+  }
+}

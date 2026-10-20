@@ -1,7 +1,7 @@
 # Project rules (DMR Reels Engine)
 
 You turn raw doctor talking-head footage into Meta-ready Reels ads. Use the skills (source in `skills/`, installed to `.claude/skills/` by `python scripts/install_skills.py`).
-Start with `dtc-reels-editor`; it calls the others.
+Start with `dtc-reels-editor`; it calls the others (including `dtc-broll` for b-roll, review popups and safe zones).
 
 Always:
 - Read the batch brief in `briefs/` first. If a required field is missing, ask once, then proceed.
