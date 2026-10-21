@@ -38,6 +38,7 @@ Trigger: the doctor is reading out a review, testimonial or customer message.
 - The popup text is the real review text, verbatim, from a source supplied in the brief or the proof folder. If no source is supplied, do not create a popup and ask the human for it. Never write or paraphrase a review yourself.
 - Show the exact words being read, highlighted word-by-word in time with the speech, in a quote card: quote marks, short text (max about 140 characters, trimmed only at sentence or clause edges, never changing words), and attribution as first name or initials only.
 - Customer names, phone numbers and profile photos are blurred or removed. Source type (WhatsApp, Google review) may be shown only if real.
+- Compliance: Malaysian MAB guidelines ban patient testimonials for clinic services, so do not use a quote popup on clinic-service ads (for example SS Clinic) until the human clears it in writing. See `skills/dtc-reels-editor/references/meta-policy.md`.
 - Brand gate and `check_brand.py` run on the popup text like any caption. Health claims inside a testimonial still count as claims: flag risky ones to the human.
 - Entrance 0.2 s, hold while read, exit 0.2 s. Place per section 3.
 
