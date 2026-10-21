@@ -14,7 +14,7 @@ Run one batch end to end. Read the brief in `briefs/<batch>.md` first; it names 
 2. **Transcribe**: Whisper, Malay, word timestamps, all clips. Save to `work/transcripts/`.
 3. **Cut**: drop repeated and filler phrases at word boundaries. Target 23-30 s masters (raw clips are ~26-36 s). Save the cut list to `work/cuts/`.
 4. **Frame**: wide and tight cuts per sentence. Track the lime product/ring by colour (ignore the plant) and punch in about 1.75x when the doctor raises it.
-5. **Design**: call `dtc-broll` for b-roll, review quote popups and safe-zone placement. Hook headline, word-by-word captions with the keyword in lime, claim chips ("Bukan ubat / Bukan minyak" style), b-roll from the brand's live site (brands/<slug>/README.md), name tag, offer card with prices from `brands/<slug>/prices.json`.
+5. **Design**: call `dtc-broll` for b-roll, review quote popups and safe-zone placement. Hook headline, word-by-word captions with the keyword in lime, claim chips ("Bukan ubat / Bukan minyak" style), b-roll from the brand's live site (brands/<slug>/README.md) or the licensed stock library (`dtc-broll` section 6), name tag, offer card with prices from `brands/<slug>/prices.json`.
 6. **Hooks**: 3 per master (A master, B cold open, C topic visual, D proof). Cut the doctor out (compare cutout models, pick cleanest edges) and place him over the topic-matched background (`hook-backgrounds`). Hook audio is the hook's own clip.
 7. **Render** 1080x1920 MP4. Send ALL hook notes before starting the batch render; do not restart renders mid-way.
 8. **QA**: frame grid check, `scripts/check_layout.py` (safe area, face, 1080x1920), then `sync-qa` on every file. Fix and re-run until 100% pass.

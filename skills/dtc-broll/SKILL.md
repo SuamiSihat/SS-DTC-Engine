@@ -11,6 +11,7 @@ Tools (all in `scripts/`):
 - `broll_suggest.py spec.json [--only 001] [--product ring,mit]` writes `work/broll_plan_<id>.md`: each kept sentence tagged (quote, myth, number, steps, concept, metaphor, product) with a suggested b-roll. Keyword rules only, so a person confirms each item.
 - `broll.py` (used by `render_batch.py`) renders the quote popup from `"broll": [{"kind": "quote", "src": [start_s, end_s], "text": "<verbatim review>", "by": "Pelanggan, WhatsApp"}]` in the clip spec. Words light up in time with the speech, captions are hidden while it shows, a headline or lower third that overlaps it is ended early, and it is skipped in the hook C card layout.
 - `check_layout.py renders/<name>.timeline.json ...` checks the safe area, the face and the 1080x1920 size from the layout `render_batch.py` records. Run it on every file in QA, next to `sync-qa`.
+- `stock_fetch.py` finds royalty-free stock clips (Pexels, Pixabay by API; Coverr, Mixkit by manual import), keeps a licence record per clip in the NAS b-roll library and logs each use. See section 6.
 
 ## 1. When b-roll is used
 B-roll exists to support or enhance what the doctor is saying at that moment. Every item is tied to a spoken phrase (word timestamps from `work/transcripts/`). No phrase, no b-roll. If the explanation is already clear on the doctor, add nothing.
@@ -31,7 +32,7 @@ Rules:
 - Never cover the doctor's mouth for long. The doctor's voice stays the audio; b-roll has no audio of its own (low-level micro-SFX on entrances are allowed).
 - Speed ramps only inside b-roll. Never change the speed of the speaker's footage or audio.
 - No pills, no anatomy imagery, no distressed people, no before/after body claims, no invented facts, figures or sources. Abstract and calm, brand colours from `brands/<slug>/brand.json`.
-- Types: animated motion, image, diagram, chart, screenshot, live-site clip. Pick by topic, not by what is easiest.
+- Types: animated motion, image, diagram, chart, screenshot, live-site clip, stock clip (section 6). Pick by topic, not by what is easiest.
 - AI-generated imagery only if the brief approves it and a budget. Never present generated imagery as proof or as a real customer.
 
 ## 2. Review / testimonial quote popup
@@ -81,12 +82,39 @@ Known limits: the doctor leaning forward can bring the chin into the caption ban
 - Run `sync-qa`, `check_brand.py`, and the 1080x1920 check. Report only checks that were actually run.
 - Hand to the human: popup quotes and attributions, blurred names, any risky claim.
 
-## 6. Ideas to consider adding (ask before building)
+## 6. Royalty-free stock footage
+Use stock for generic scenes, textures, nature, objects and hands that support a spoken phrase. Brand live-site footage still comes first for the product.
+
+Sources (licences checked 2026-10-21; re-check each quarter):
+| Source | How | Licence accepted |
+|---|---|---|
+| Pexels | API (`PEXELS_API_KEY`) | Pexels License, CC0 |
+| Pixabay | API (`PIXABAY_API_KEY`) | Pixabay Content License |
+| Coverr | Manual download + `import` | Coverr License, real (non-AI) clips only |
+| Mixkit | Manual download + `import` | Mixkit Free License only (never Restricted) |
+Not used: sites that mix free and attribution-required or non-commercial licences (e.g. Videvo, Videezy).
+
+Workflow:
+1. `python scripts/stock_fetch.py search "<english keywords>"`: downloads candidates (short side at least 1080 px, 2-12 s), rejects low-res and face clips, writes a contact sheet to `<library>/_sheets/`.
+2. Manual sources: put the clips and a `licenses.csv` (file, source, url, license, ai_generated, notes) in a folder, then `python scripts/stock_fetch.py import <folder>`. Clips without a source URL or licence, AI clips and Restricted/non-commercial clips are rejected.
+3. A person picks from the contact sheet. Then `python scripts/stock_fetch.py use <clip_id> --batch <batch>` copies it to `batches/<batch>/work/broll/` and logs the use. Clips with status `needs_face_check` (OpenCV missing) need `--face-checked-by <name>` after a person looks.
+4. `python scripts/stock_fetch.py list` shows every clip, its licence, status and how often it was used. Avoid using one clip in more than 2 batches.
+
+Rules (from the licences and our ad rules):
+- No identifiable faces by default. The licences forbid implying a person endorses a product or showing them in a negative way, and a stranger next to men's health content implies he has the condition. Objects, hands, silhouettes, nature, textures. The face check is conservative; a person still looks at every clip.
+- No visible logos, brands or recognisable private buildings.
+- Stock never stands in for our product, packaging, ingredients sold as ours, or SS Clinic premises (misleading use; MAB for the clinic). Generic honey is a mood shot, not "Madu Tualang".
+- Stock is never proof, never a customer and never a before/after.
+- AI-generated stock only if the brief approves AI imagery and a budget (same as section 1).
+- All other b-roll rules apply: tied to a spoken phrase, fruit metaphors only, no pills, no anatomy, no distressed people, brand colours, editorial look optional.
+- Keep the licence record (`<clip>.json`) with the clip forever; it is our proof if a platform or rights holder asks.
+
+## 7. Ideas to consider adding (ask before building)
 - Auto b-roll suggestions from the transcript: tag each sentence as concept, number, proof, product or metaphor and propose items.
 - Counter or ticker for "units sold" or timeline numbers from `prices.json`.
 - Myth / fact stamp card for the "Mitos atau fakta" hooks.
 - Highlight ring or arrow that points at the product when it is raised.
 - Safe-zone guide overlay in the frame grid so every check is visual.
-- A b-roll library per brand with tags and licences, so the same clip is not reused too often.
+- Brand tags in the stock library (section 6 tracks licences and reuse; brand tagging is not built yet).
 - Subtitle position auto-switch above or below the face from the face track.
 - Sound effects on b-roll entrances through `scripts/sound_design.py`, at low level and off by default.
