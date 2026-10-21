@@ -17,6 +17,7 @@ SS Clinic videos run in one of two modes. Full rules: `content_modes` in brand.j
 **Educational (default)**: a real SS Clinic doctor teaches, in organic posts.
 - Identified on screen with a lower third (name and title). Uniform or plain clothes are both fine; clothing does not change the rules.
 - Close with a neutral line such as "Jumpa doktor untuk pemeriksaan jika ada simptom".
+- Clinic logo on the end card, posting from the SS Clinic page and the lower third "Dr Rak, Men's Health Doctor": confirmed acceptable 2026-10-21.
 - No line or end card that sends viewers to SS Clinic ("kita check dan rawat di SS Clinic", "Datang ke SS Clinic"), no booking link, price, offer or testimonial.
 
 **KOL ad**: a paid clinic advertisement presented by a hired KOL, never by a real doctor.

@@ -58,7 +58,7 @@ Our brands are men's health (SS Clinic: clinic services; Dr. MIT Ring, MENSS, RE
 - The doctor is identified on screen (lower third with name and title). Plain clothes or uniform are both fine.
 - Evidence-based teaching only. No superlatives, no "pakar terbaik", no promoting his skill or experience.
 - Close with a neutral line such as "Jumpa doktor untuk pemeriksaan jika ada simptom". No line that sends viewers to SS Clinic, no booking link, no price, offer or testimonial.
-- Open item: whether posting from the SS Clinic page or showing the clinic logo already counts as advertising. Ask the adviser or MAB in writing.
+- Clinic logo on the end card, posting from the SS Clinic page and the lower third "Dr Rak, Men's Health Doctor": confirmed acceptable 2026-10-21 (decision log in brands/ssclinic/brand.json).
 
 **KOL ad**: paid clinic advertisement presented by a KOL, never by a real doctor.
 - Each posting needs its own KKLIU approval before it runs. The KKLIU number goes in the spec.
@@ -108,7 +108,8 @@ The human confirms, per batch: each hook and headline wording; any testimonial, 
 ## 5. Open items
 - Read Meta's live pages for Health and wellness, Adult products or services and Personal attributes in a browser and replace the third-party summaries with Meta's exact wording and dates.
 - Get the current MAB services guideline document (newer than MAB 6/2011) and the MAB products policy list.
-- Ask a Malaysian healthcare advertising adviser, in writing: (1) whether an SS Clinic Educational video posted from the clinic page, with the clinic logo, counts as advertising; (2) the exact neutral closing line the doctor may use; (3) whether doctor-led product ads (Dr. MIT Ring) fit MMC 5.14 given the product's regulatory status.
+- Ask a Malaysian healthcare advertising adviser, in writing: (1) the exact neutral closing line the doctor may use; (2) whether doctor-led product ads (Dr. MIT Ring) fit MMC 5.14 given the product's regulatory status.
+- DONE 2026-10-21: SS Clinic logo / clinic-page posting for Educational videos and the lower third title confirmed acceptable (brand decision log).
 - `scripts/check_brand.py` still names the older "MMC guideline on dissemination of information" in its doctor-led service message; update the wording to V2/2025 when the code is next changed.
 - TikTok ad policy for health and sexual health has not been researched yet.
 - DONE 2026-10-21: keyword screen added in `scripts/policy_rules.py`, run by `scripts/check_brand.py` (REVIEW only). Extend the word lists after each batch review; it cannot judge context.

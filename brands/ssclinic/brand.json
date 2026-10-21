@@ -120,6 +120,12 @@
       "reason": "MAB Policy and Decision (Services) 12/2007, amended 1/2025: no doctors in clinic advertisements. MMC Guideline V2/2025 3.2, 6.5: no patient solicitation by doctors. Act 290 s.4A.",
       "replaces": "End card line 'Kami Check & Rawat' and CTA 'Datang ke SS Clinic' on doctor videos (2026-10-16). Not to be used in Educational mode.",
       "open": "Adviser to confirm whether clinic-page posting or the clinic logo makes an Educational video an advertisement, and the exact neutral closing line."
+    },
+    {
+      "date": "2026-10-21",
+      "decided_by": "Head of Creative (Muhammad Harussani Adul Manap)",
+      "decision": "Confirmed acceptable for SS Clinic Educational videos: (1) SS Clinic logo on the end card / posting from the clinic page; (2) lower third 'Dr Rak, Men's Health Doctor'.",
+      "unchanged": "Still no clinic CTA, offer, testimonial or proof in Educational mode."
     }
   ],
   "standing_notice": "SS Clinic decision log 2026-10-21: Educational mode (default) = real doctor, no clinic CTA, no offer or testimonial. KOL ad mode = KOL only, KKLIU number per posting. Claims guidance is still TBC.",
@@ -144,7 +150,8 @@
         "Testimonials, quote popups or proof screenshots",
         "Superlatives or promoting the doctor's skill or experience"
       ],
-      "open": "Whether posting from the SS Clinic page or showing the clinic logo counts as advertising: ask the adviser or MAB in writing."
+      "open": null,
+      "resolved": "2026-10-21: clinic logo on the end card and posting from the SS Clinic page confirmed acceptable for Educational videos; lower third 'Dr Rak, Men's Health Doctor' confirmed acceptable."
     },
     "kol_ad": {
       "who": "Hired KOL. Never a real doctor (MAB policy 12/2007, amended 1/2025).",
