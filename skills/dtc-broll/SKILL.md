@@ -97,7 +97,7 @@ Not used: sites that mix free and attribution-required or non-commercial licence
 Workflow:
 1. `python scripts/stock_fetch.py search "<english keywords>"`: downloads candidates (short side at least 1080 px, 2-12 s), rejects low-res and face clips, writes a contact sheet to `<library>/_sheets/`.
 2. Manual sources: put the clips and a `licenses.csv` (file, source, url, license, ai_generated, notes) in a folder, then `python scripts/stock_fetch.py import <folder>`. Clips without a source URL or licence, AI clips and Restricted/non-commercial clips are rejected.
-3. A person picks from the contact sheet. Then `python scripts/stock_fetch.py use <clip_id> --batch <batch>` copies it to `batches/<batch>/work/broll/` and logs the use. Clips with status `needs_face_check` (OpenCV missing) need `--face-checked-by <name>` after a person looks.
+3. A person picks from the contact sheet. Then `python scripts/stock_fetch.py use <clip_id> --batch <batch>` copies it to `batches/<batch>/work/broll/` and logs the use. The face check uses OpenCV YuNet (`fetch-model` downloads the newest default model once per PC). Clips with status `needs_face_check` (model or OpenCV missing) need `--face-checked-by <name>` after a person looks.
 4. `python scripts/stock_fetch.py list` shows every clip, its licence, status and how often it was used. Avoid using one clip in more than 2 batches.
 
 Rules (from the licences and our ad rules):

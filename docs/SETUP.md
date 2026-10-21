@@ -10,7 +10,7 @@ For the person installing the engine on a PC. Everyone else can skip this docume
 5. Set `DESIGN_SYSTEM_ROOT` in `config.env` and run `python scripts/sync_brand_assets.py`. It copies the latest logos, patterns and doctor-consent status from the SuamiSihat Design System into `brands/<slug>/` (git-ignored; assets are under the proprietary licence). Re-run before every batch. Add `prices.json` per product brand.
 6. Install the skills into Claude Code: `python scripts/install_skills.py` (copies `skills/` to `.claude/skills/`; re-run after changing a skill).
 7. Self-test: `python setup/check_env.py` and `python scripts/check_sync.py --selftest`
-8. Stock b-roll (optional): create free API keys at pexels.com/api and pixabay.com/api/docs, put them in `config.env` (`PEXELS_API_KEY`, `PIXABAY_API_KEY`) with `BROLL_LIBRARY` (NAS folder), then run `python scripts/stock_fetch.py selftest`. Keys stay in `config.env`, which git ignores.
+8. Stock b-roll (optional): create free API keys at pexels.com/api and pixabay.com/api/docs, put them in `config.env` (`PEXELS_API_KEY`, `PIXABAY_API_KEY`) with `BROLL_LIBRARY` (NAS folder), then run `python scripts/stock_fetch.py fetch-model` (YuNet face model, newest default for OpenCV 5) and `python scripts/stock_fetch.py selftest`. Keys stay in `config.env`, which git ignores.
 
 ## Running a batch
 1. Drop raw clips on the NAS `incoming/<batch-name>/`.

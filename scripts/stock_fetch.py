@@ -18,6 +18,7 @@ Usage:
   python scripts/stock_fetch.py list [--status ok]
   python scripts/stock_fetch.py use <clip_id> --batch <batch>   # copies into batches/<batch>/work/broll/ and logs the use
   python scripts/stock_fetch.py selftest               # offline test with generated clips and fake API replies
+  python scripts/stock_fetch.py fetch-model            # download the YuNet face model (once per PC)
 
 licenses.csv for `import` (one row per clip):
   file,source,url,license,ai_generated,notes
@@ -37,6 +38,10 @@ BAD_LICENSE_WORDS = ("restricted", "non-commercial", "noncommercial", "personal 
 MIN_SHORT_SIDE = 1080   # the final video is 1080x1920; b-roll is rendered at 1080 wide at most
 FACE_MIN_FRAC = 0.08    # a detected face larger than 8% of the short side counts as identifiable
 UA = "SS-DTC-Engine stock_fetch/1.0"
+# Face detector: OpenCV YuNet, newest default model from opencv_zoo (dynamic input, built for OpenCV 5.x). MIT licence.
+# Always prefer the newest model listed in opencv_zoo/models/face_detection_yunet/README.md; update both lines together.
+FACE_MODEL_NAME = "face_detection_yunet_2026may.onnx"
+FACE_MODEL_URL = "https://github.com/opencv/opencv_zoo/raw/main/models/face_detection_yunet/" + FACE_MODEL_NAME
 
 # ---------------- config
 def read_env():
@@ -128,14 +133,31 @@ def grab_frames(path, k=6):
             if fp.exists(): frames.append(fp.read_bytes())
     return frames
 
+def face_model_path():
+    return pathlib.Path(cfg("FACE_MODEL") or (ROOT / "models" / FACE_MODEL_NAME))
+
 def face_check(path):
-    """'ok', 'face' or 'unchecked'. Conservative: any sizeable frontal or profile face fails."""
+    """'ok', 'face' or 'unchecked'. Conservative: any sizeable face fails.
+    Uses YuNet (cv2.FaceDetectorYN) when the model file is present; old Haar cascades only as a fallback."""
     try:
         import cv2, numpy as np
     except ImportError:
         return "unchecked"
+    model = face_model_path()
+    if hasattr(cv2, "FaceDetectorYN") and model.exists():
+        det = None
+        for b in grab_frames(path):
+            img = cv2.imdecode(np.frombuffer(b, np.uint8), cv2.IMREAD_COLOR)
+            if img is None: continue
+            h, w = img.shape[:2]
+            if det is None: det = cv2.FaceDetectorYN.create(str(model), "", (w, h), 0.7, 0.3, 5000)
+            det.setInputSize((w, h))
+            _, faces = det.detect(img)
+            if faces is not None and any(min(f[2], f[3]) >= min(w, h) * FACE_MIN_FRAC for f in faces):
+                return "face"
+        return "ok" if det is not None else "unchecked"
     if not hasattr(cv2, "CascadeClassifier") or not hasattr(cv2, "data"):
-        return "unchecked"  # OpenCV 5 moved Haar cascades out of the main package; a person checks instead
+        return "unchecked"  # no YuNet model and no Haar cascades (OpenCV 5): run fetch-model, or a person checks
     casc = [cv2.CascadeClassifier(cv2.data.haarcascades + n) for n in ("haarcascade_frontalface_default.xml", "haarcascade_profileface.xml")]
     for b in grab_frames(path):
         img = cv2.imdecode(np.frombuffer(b, np.uint8), cv2.IMREAD_GRAYSCALE)
@@ -282,6 +304,14 @@ def cmd_use(a):
     rec["used_in"].append({"batch": a.batch, "date": now()}); save(js, rec)
     print(f"copied to {dest / rec['file']}" + (f"  (NOTE: already used {prior}x; avoid overusing one clip)" if prior >= 2 else ""))
 
+def cmd_fetch_model(a):
+    dest = face_model_path(); dest.parent.mkdir(parents=True, exist_ok=True)
+    tmp = dest.with_suffix(".part")
+    http_download(FACE_MODEL_URL, tmp)
+    if tmp.stat().st_size < 10000:  # a Git LFS pointer instead of the model
+        tmp.unlink(); sys.exit(f"Download from {FACE_MODEL_URL} was not the model file. Download it in a browser to {dest}.")
+    tmp.replace(dest); print(f"face model saved: {dest} ({dest.stat().st_size} bytes)")
+
 # ---------------- selftest (offline)
 def selftest():
     global http_json, http_download
@@ -334,9 +364,10 @@ def main():
     i = sp.add_parser("import"); i.add_argument("folder"); i.add_argument("--keep-rejected", action="store_true")
     l = sp.add_parser("list"); l.add_argument("--status")
     u = sp.add_parser("use"); u.add_argument("clip_id"); u.add_argument("--batch", required=True); u.add_argument("--face-checked-by")
-    sp.add_parser("selftest")
+    sp.add_parser("selftest"); sp.add_parser("fetch-model")
     a = ap.parse_args()
-    {"search": cmd_search, "import": cmd_import, "list": cmd_list, "use": cmd_use, "selftest": lambda _: selftest()}[a.cmd](a)
+    {"search": cmd_search, "import": cmd_import, "list": cmd_list, "use": cmd_use, "selftest": lambda _: selftest(),
+     "fetch-model": cmd_fetch_model}[a.cmd](a)
 
 if __name__ == "__main__":
     main()
