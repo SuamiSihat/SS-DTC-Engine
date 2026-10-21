@@ -24,7 +24,15 @@ Requested by:
 - Offer card: live prices from brands/<slug>/prices.json
 - Proof line (units sold etc.): 
 
+## Variants (optional, planned feature)
+- Variants per video: A-D only / up to N (engine builds only what the footage supports)
+- Funnel stages wanted: TOFU / MOFU / BOFU
+- Styles allowed: from brands/<slug>/brand.json product_rules (clean, energy, story, faceless)
+- Music: none / yes (also deliver a no-music version)
+
 ## Compliance (decide BEFORE the run)
+- SS Clinic only, content mode: educational (default; real doctor, no clinic CTA) / kol_ad (KOL only)
+- SS Clinic KOL ad only, KKLIU approval number per posting: 
 - Doctor appearing (name; must be a SuamiSihat-appointed doctor, or write none): 
 - Written-consent reference for the doctor (must match brands/<slug>/brand.json): 
 - Claims approved by brand owner (who, date): 

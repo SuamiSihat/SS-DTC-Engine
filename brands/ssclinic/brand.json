@@ -73,11 +73,16 @@
     "cepat",
     "segera",
     "terbaik",
-    "dr "
+    "dr ",
+    "kami check & rawat",
+    "check dan rawat",
+    "rawat di ss clinic",
+    "datang ke ss clinic",
+    "ss clinic boleh bantu"
   ],
   "claims_status": "TBC - no claims guidance supplied",
   "doctor_consent_ref": null,
-  "doctor_allowed_in_ads": "yes, for educational videos, as a lower third only (name and title), and only doctors from SS Clinic. Head of Creative decision 2026-10-16; replaces guideline v1.0 line 'do not show or name individual doctors'.",
+  "doctor_allowed_in_ads": "yes, in Educational mode only: real SS Clinic doctor, organic educational posts, identified with a lower third (name and title), no clinic CTA. Never in clinic advertisements (KOL ad mode). Head of Creative decisions 2026-10-16 and 2026-10-21.",
   "slug": "ssclinic",
   "source": "SuamiSihat Design System repo (static/products/<slug>/metadata.json, docs/claims-review/README.md and audit-2026-10-13.md), plus brand guideline v1.0 PDFs (16 Oct 2026)",
   "gate": {
@@ -107,13 +112,54 @@
       "date": "2026-10-16",
       "decided_by": "Head of Creative (Muhammad Harussani Adul Manap)",
       "decision": "Guideline wording to read: only doctors from SS Clinic are allowed in SS Clinic videos. The engine now enforces this through appointed_doctors."
+    },
+    {
+      "date": "2026-10-21",
+      "decided_by": "Head of Creative (Muhammad Harussani Adul Manap)",
+      "decision": "SS Clinic content runs in two modes. Educational (default): real SS Clinic doctor in organic educational posts, no clinic CTA. KOL ad: clinic advertisements are presented by a hired KOL, never a real doctor, with KKLIU approval per posting.",
+      "reason": "MAB Policy and Decision (Services) 12/2007, amended 1/2025: no doctors in clinic advertisements. MMC Guideline V2/2025 3.2, 6.5: no patient solicitation by doctors. Act 290 s.4A.",
+      "replaces": "End card line 'Kami Check & Rawat' and CTA 'Datang ke SS Clinic' on doctor videos (2026-10-16). Not to be used in Educational mode.",
+      "open": "Adviser to confirm whether clinic-page posting or the clinic logo makes an Educational video an advertisement, and the exact neutral closing line."
     }
   ],
-  "standing_notice": "SS Clinic decision log 2026-10-16: Dr Rak allowed in educational videos (lower third, SS Clinic doctors only). The brand guideline v1.0 still says no individual doctors; claims guidance is still TBC.",
-  "end_card_line": "Kami Check & Rawat",
+  "standing_notice": "SS Clinic decision log 2026-10-21: Educational mode (default) = real doctor, no clinic CTA, no offer or testimonial. KOL ad mode = KOL only, KKLIU number per posting. Claims guidance is still TBC.",
+  "end_card_line": "Educational mode: neutral close only (no clinic CTA). KOL ad mode: wording as approved in the KKLIU application. 'Kami Check & Rawat' retired for doctor videos 2026-10-21.",
   "logo_files": {
     "on_light_background": "design-system/logos/logo_ssc_primary_light.svg (navy and light blue)",
     "on_dark_background": "design-system/logos/logo_ssc_primary_dark.svg (white text, bright blue mark)",
     "note": "file names follow the design system: 'light' = for light backgrounds, 'dark' = for dark backgrounds"
+  },
+  "content_modes": {
+    "default": "educational",
+    "educational": {
+      "who": "Real SS Clinic doctor (appointed_doctors). Uniform or plain clothes; always identified as a doctor on screen.",
+      "allowed": [
+        "Evidence-based teaching on men's health topics",
+        "Lower third with name and title",
+        "Neutral close such as 'Jumpa doktor untuk pemeriksaan jika ada simptom'"
+      ],
+      "not_allowed": [
+        "Any line or end card sending viewers to SS Clinic (e.g. 'kita check dan rawat di SS Clinic', 'Datang ke SS Clinic')",
+        "Booking links, prices, offers or discounts",
+        "Testimonials, quote popups or proof screenshots",
+        "Superlatives or promoting the doctor's skill or experience"
+      ],
+      "open": "Whether posting from the SS Clinic page or showing the clinic logo counts as advertising: ask the adviser or MAB in writing."
+    },
+    "kol_ad": {
+      "who": "Hired KOL. Never a real doctor (MAB policy 12/2007, amended 1/2025).",
+      "requires": [
+        "KKLIU approval number for EACH posting before it runs (MAB allows one format per application)",
+        "MAB illustrative statement on screen if anyone portrays a doctor or patient"
+      ],
+      "allowed": [
+        "KOL speaking about the premises and the visit experience",
+        "Clinic CTA as approved in the KKLIU application"
+      ],
+      "not_allowed": [
+        "Testimonials about treatment results or a doctor's skill",
+        "Discounts, inducements, before/after, superlatives, countdowns"
+      ]
+    }
   }
 }

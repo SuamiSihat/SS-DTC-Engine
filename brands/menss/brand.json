@@ -77,5 +77,56 @@
   ],
   "planned": [
     "White-label MENSS ring in blue, using the same ring tooling (FAI AMS-26043, which is marked MENSS). Future plan, no approved assets yet."
-  ]
+  ],
+  "product_rules": {
+    "penile_pump": {
+      "angles": [
+        "How it works, step by step",
+        "Safe use and care",
+        "Build quality and discreet delivery"
+      ],
+      "styles": [
+        "clean",
+        "story"
+      ],
+      "not_allowed": [
+        "Size, performance or treatment results",
+        "Inflation or pressure metaphors (balloons, engines, coffee machines)",
+        "Showing the device in use"
+      ],
+      "note": "Act 290 s.3(1)(c) bars advertising an appliance for improving sexual performance."
+    },
+    "fresh_wash": {
+      "angles": [
+        "Daily grooming and hygiene routine",
+        "Freshness",
+        "Product shown beside everyday grooming items"
+      ],
+      "styles": [
+        "clean",
+        "story"
+      ],
+      "not_allowed": [
+        "Infection, cure or treatment wording",
+        "Invented statistics (e.g. '99% of men')"
+      ]
+    },
+    "ring_blue": {
+      "angles": [
+        "Usage steps",
+        "Sizing guide",
+        "Care and cleaning",
+        "Discretion"
+      ],
+      "styles": [
+        "clean",
+        "story"
+      ],
+      "not_allowed": [
+        "Performance or size promises (stricter than Dr. MIT Ring)",
+        "Mixing with Dr. MIT Ring (green) in one batch or one video"
+      ],
+      "note": "Blue MENSS ring. The engine's product tracker follows the lime Dr. MIT Ring; a blue colour track is needed before MENSS Ring batches."
+    }
+  }
 }

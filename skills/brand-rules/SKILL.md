@@ -27,9 +27,11 @@ Read `brands/<slug>/brand.json` and `brands/<slug>/README.md` before planning. N
 
 ## Known differences that matter for video
 - **Dr. MIT Ring**: always written 'Dr. MIT Ring' (M.I.T. = Male Intimacy Technology). Lime text/captions on black are OK; never white-on-lime; yellow only as the count chip on black; wordmark pill on black. Doctor-led ads are ALLOWED but only with SuamiSihat-appointed doctors (`appointed_doctors` in brand.json); pass the name: `check_brand.py --doctor "Dr Amir"`. Performance wording (erection, hardness, stamina, 'tahan lama') is allowed. 'Patented', 'clinically proven', 'no side effects' and 'andrologically tested' stay screened (BLOCK) because the only test evidence on file (First Article Report AMS-26043) covers material, hardness and dimensions, not efficacy or safety. Decision log: brand.json.
-- **SS Clinic**: guideline says do not show or name individual doctors in brand material, no cure/speed claims, no countdowns or 'last slots'. Doctor-led talking-head ads need brand-owner approval first.
-- **REJAL**: food, never medicine. No 'ubat', 'kuat', 'tenaga batin', no green, no (R), no AI-rendered packaging.
-- **MENSS**: no treatment claims for devices; no size or performance promises.
+- **SS Clinic**: two content modes (decision 2026-10-21, `content_modes` in brand.json). **Educational** (default): real SS Clinic doctor, organic posts, identified with a lower third, neutral close, NO clinic CTA, offer or testimonial. **KOL ad**: hired KOL only, never a real doctor; KKLIU number per posting in the spec; no testimonials about treatment, no discounts, before/after or superlatives. No cure/speed claims, no countdowns or 'last slots' in either mode. If the brief does not name the mode, ask.
+- **REJAL**: food, never medicine. No 'ubat', 'kuat', 'tenaga batin', no green, no (R), no AI-rendered packaging. Product: Bawang Lanang + Madu Tualang; no testosterone, energy or stamina claims and no doctor endorsement (`product_rules` in brand.json).
+- **MENSS**: no treatment claims for devices; no size or performance promises. Products: Penile Pump, FRESH Wash, MENSS Ring (blue). Per-product angles and styles: `product_rules` in brand.json. MENSS Ring and Dr. MIT Ring (green) never share a batch or video.
 - **Mensculine**: English-first, no slang. **PERTABI**: not an ad brand (community partner); engine refuses product-ad batches.
 
 All six guidelines mark claims as TBC. For brands other than DMR, doctor consent and claims sign-off come from the brand owner (branding@suamisihat.com).
+
+Doctors in product ads (Dr. MIT Ring): MMC Guideline V2/2025 5.14 discourages doctors from endorsing health-related products. Keep following the brand decision, and list it on the human review note for every doctor-led product batch.

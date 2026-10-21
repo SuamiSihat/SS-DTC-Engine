@@ -28,6 +28,7 @@ The engine speeds up editing. It does not replace judgement. People remain respo
 - Approving health and product claims with the brand owner.
 - Confirming prices and offers are current.
 - Blurring customer names in proof screenshots.
+- Choosing the SS Clinic content mode, and getting KKLIU approval for every SS Clinic KOL ad before it runs.
 - Giving final sign-off on every video before it is published.
 
 ## What is in this folder
@@ -35,7 +36,7 @@ The engine speeds up editing. It does not replace judgement. People remain respo
 | Folder or file | Purpose |
 | --- | --- |
 | `briefs/` | Brief template and completed briefs |
-| `brands/` | Rules for each brand (colours, tone, wording to avoid, doctor policy) |
+| `brands/` | Rules for each brand (colours, tone, wording to avoid, doctor policy, per-product video rules) |
 | `skills/` | The engine's editing instructions |
 | `lessons.md` | Notes from past batches so mistakes are not repeated |
 | `docs/SETUP.md` | Installation guide for the person setting up a PC |

@@ -10,3 +10,11 @@ Put the supplied brand files here (download the latest from the SuamiSihat Desig
 Claims status: TBC - no claims guidance supplied
 Doctor consent ref: `doctor_consent_ref` in brand.json (null = not on file).
 Update `brand.json` only when the brand owner issues a new guideline version.
+
+## Product and video rules
+Machine-readable: `product_rules` in brand.json.
+
+**Bawang Lanang + Madu Tualang** (honey + pearl garlic)
+- Angles: origin of the honey and garlic, family recipe and tradition, how to enjoy it daily.
+- Styles: Story, Faceless / b-roll (fits best), Clean. Real product, warm low-key light, dark stone or aged wood, slow pour and crunch close-ups.
+- Not allowed: testosterone, energy, stamina or sexual-health claims; doctor endorsement (food brand, MMC 5.14); green colour cues.

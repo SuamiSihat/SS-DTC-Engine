@@ -28,7 +28,8 @@ B-roll exists to support or enhance what the doctor is saying at that moment. Ev
 
 Rules:
 - Density: about 3-5 items per 23-30 s master, 1.5-3 s each, at least 1 s of clean doctor between items. Longer clips get fewer, not more.
-- Never cover the doctor's mouth for long. The doctor's voice stays the audio; b-roll has no audio of its own.
+- Never cover the doctor's mouth for long. The doctor's voice stays the audio; b-roll has no audio of its own (low-level micro-SFX on entrances are allowed).
+- Speed ramps only inside b-roll. Never change the speed of the speaker's footage or audio.
 - No pills, no anatomy imagery, no distressed people, no before/after body claims, no invented facts, figures or sources. Abstract and calm, brand colours from `brands/<slug>/brand.json`.
 - Types: animated motion, image, diagram, chart, screenshot, live-site clip. Pick by topic, not by what is easiest.
 - AI-generated imagery only if the brief approves it and a budget. Never present generated imagery as proof or as a real customer.
@@ -38,7 +39,7 @@ Trigger: the doctor is reading out a review, testimonial or customer message.
 - The popup text is the real review text, verbatim, from a source supplied in the brief or the proof folder. If no source is supplied, do not create a popup and ask the human for it. Never write or paraphrase a review yourself.
 - Show the exact words being read, highlighted word-by-word in time with the speech, in a quote card: quote marks, short text (max about 140 characters, trimmed only at sentence or clause edges, never changing words), and attribution as first name or initials only.
 - Customer names, phone numbers and profile photos are blurred or removed. Source type (WhatsApp, Google review) may be shown only if real.
-- Compliance: Malaysian MAB guidelines ban patient testimonials for clinic services, so do not use a quote popup on clinic-service ads (for example SS Clinic) until the human clears it in writing. See `skills/dtc-reels-editor/references/meta-policy.md`.
+- Compliance: Malaysian MAB guidelines ban patient testimonials for clinic services, so never use a quote popup on SS Clinic content, in either mode (Educational or KOL ad). See `skills/dtc-reels-editor/references/meta-policy.md`.
 - Brand gate and `check_brand.py` run on the popup text like any caption. Health claims inside a testimonial still count as claims: flag risky ones to the human.
 - Entrance 0.2 s, hold while read, exit 0.2 s. Place per section 3.
 

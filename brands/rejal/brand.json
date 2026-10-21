@@ -95,5 +95,26 @@
     "Never publish: 'melancarkan darah', 'tenaga batin', immunity, cardiovascular, digestive or nitric-oxide benefits, 'organic', lab values (TPC, diastase, SAC %)",
     "Describe ingredients, origin and use only",
     "Labels need kcal/kJ nutrition, real serving size, net weight, infant warning on honey; Halal/MeSTI only from the manufacturer's own valid certificate"
-  ]
+  ],
+  "product_rules": {
+    "bawang_lanang_madu_tualang": {
+      "angles": [
+        "Origin of the Tualang honey and bawang lanang",
+        "Family recipe and tradition",
+        "How to enjoy it daily",
+        "Slow pour and crunch close-ups"
+      ],
+      "styles": [
+        "story",
+        "faceless",
+        "clean"
+      ],
+      "not_allowed": [
+        "Testosterone, energy, stamina or sexual-health claims",
+        "Doctor endorsement (food brand; MMC 5.14)",
+        "Green colour cues"
+      ],
+      "note": "Faceless / b-roll style fits best: real product, warm low-key light, dark stone or aged wood."
+    }
+  }
 }

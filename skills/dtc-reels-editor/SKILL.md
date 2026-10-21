@@ -1,6 +1,6 @@
 ---
 name: dtc-reels-editor
-description: Turn raw talking-head doctor footage into Meta-ready Reels ads (masters plus hook versions) for Dr MIT Ring. Use when the user asks to run a batch, edit doctor clips, make hooks, or produce ad creatives from a brief in briefs/.
+description: Turn raw talking-head footage into Meta-ready Reels videos (masters, hook versions and funnel/style variants) for any SuamiSihat brand (Dr. MIT Ring, MENSS, REJAL, SS Clinic, Mensculine). Use when the user asks to run a batch, edit doctor or presenter clips, make hooks or variants, or produce ad creatives from a brief in briefs/.
 ---
 
 # DTC Reels editor (orchestrator)
@@ -29,6 +29,8 @@ Run one batch end to end. Read the brief in `briefs/<batch>.md` first; it names 
 - Send all files, not samples, with a short list of what the human must confirm
   (customer-name blur, risky hooks, prices, sound check).
 - Hand compliance decisions (see CLAUDE.md) back to the human.
+- SS Clinic: read the content mode from the brief (Educational by default, or KOL ad). Educational videos never end with a clinic CTA, offer or testimonial; KOL ads need a KKLIU number per posting and never show a real doctor. See `references/meta-policy.md` section 1a.
+- Never disguise flagged words with creative spelling, emojis or code words. Pick a different real line.
 
 - Output is always 1080x1920, never 2K or 4K. Captions, lower thirds and popups stay inside the safe zones and off the doctor's face (`dtc-broll`).
 
@@ -46,3 +48,36 @@ Rendering: build `work/spec.json` (see `references/spec-format.md`) and run `scr
 
 See `references/` for beat plans, Meta policy notes and safe zones. Fill those in from the first batch and
 your own Meta policy review; do not treat the stubs as final.
+
+## Variant mode: funnel x hook x style (PLANNED)
+Status: agreed direction 2026-10-21. `render_batch.py` does not read these fields yet; today it renders versions A, B, C (and D where built). Until the code lands, plan variants in the batch note and render them as separate versions by hand.
+
+Goal: up to 10 videos from one source clip, each a different combination of funnel stage, hook and style. Hooks and styles are chosen from the source video and its topic, never forced to fill a quota.
+
+**Funnel stages**
+- TOFU: needs a strong standalone line (a real question, myth or surprising point). 23-30 s. Soft close, no price.
+- MOFU: needs about 15 s or more of continuous explanation. 23-30 s. Diagram b-roll, "learn more" close.
+- BOFU: needs a product line. 15-20 s. Offer card from `prices.json`. Product brands only; never on SS Clinic Educational videos.
+
+**Hooks**: A master, B cold open, C topic visual, D proof, myth/fakta card, question hook (a question the speaker really asks). Proof (D) only with a real proof source and never on SS Clinic.
+
+**Styles** (only those listed for the brand/product in `brands/<slug>/brand.json` -> `product_rules`):
+- `clean`: today's default; clean cuts, clear audio, brand look.
+- `energy`: more punch-ins, speed ramps and SFX hits on b-roll only. The speaker's audio and speech speed are never altered (sync-qa).
+- `story`: follows the speaker's own problem, reason, answer order; slower pace, fewer b-roll items. Fits MOFU.
+- `faceless`: product and b-roll led over the speaker's real audio. Needs a rule change in `dtc-broll` (no full-frame cover over the doctor today); use only where the brand allows it (REJAL first).
+The SS Editorial look stays a separate on/off finishing layer on any style.
+
+**Selection rules**
+1. Tag every kept sentence (`broll_suggest.py` tags: quote, myth, number, steps, concept, metaphor, product).
+2. Build each funnel stage only if the footage supports it (rules above). If it does not, make fewer variants and say why in the batch note. Never pad to 10.
+3. Pick hooks from real lines that suit the stage; pick styles from the brand's allowed list, preferring `energy` for TOFU, `story` for MOFU and `clean` for BOFU when the footage fits.
+4. Every variant still passes the brand gate, `check_layout.py` and sync-qa, and gets its own row in Ad Index.csv.
+
+**Editing elements adopted**
+- Micro-SFX on b-roll entries, chips and key numbers via `scripts/sound_design.py`, low level.
+- Background music only when the brief asks, at about -18 to -22 dB under the voice, and always also deliver a version without music.
+- Tighter breath gaps at word boundaries in the Cut step.
+- Loop ending: close on a real line that leads back into the opening line.
+
+**Elements rejected (conflict with rules)**: frustrated or distressed openers, invented charts or statistics, before/after, inflation or engine metaphors for devices, non-brand fonts and palettes, creative spelling to dodge moderation, testosterone or energy claims for REJAL.

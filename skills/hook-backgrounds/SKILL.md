@@ -13,7 +13,11 @@ Do NOT default to generic brand-ring animation.
 | tahan lama / masa | stopwatch (e.g. 26:15 style counter) |
 | size / membesar | banana (fruit metaphor) rising with the ring |
 | ukur / bertambah | measuring tape |
-| proof | wall of real customer reviews, names blurred |
+| proof | wall of real customer reviews, names blurred (never SS Clinic) |
+| MENSS device (pump, ring) | product on Carbon black with Precision Lines; no inflation or pressure metaphors |
+| MENSS FRESH Wash | bright grooming shelf beside everyday grooming items |
+| REJAL honey + bawang lanang | slow honey pour, garlic close-up, dark stone or aged wood; no green |
+| SS Clinic educational topic | calm clinic-navy diagram or topic object; no pills, no distressed people |
 
 Compliance note: for Dr. MIT Ring the size/stamina visuals (banana, measuring tape, stopwatch) are allowed by the Head of Creative decision of 2026-10-16. For MENSS and other brands, size or performance promises are listed as avoid; run `scripts/check_brand.py` first.
 
