@@ -13,6 +13,7 @@ Read `brands/<slug>/brand.json` and `brands/<slug>/README.md` before planning. N
 ## Gate (run first, and again on final text)
 1. List every overlay/caption/hook line you plan to use into `batches/<batch>/work/texts.txt`.
 2. `python scripts/check_brand.py --brand <slug> --texts batches/<batch>/work/texts.txt [--doctor "<doctor name>"]`
+   The same command also runs the Meta / Malaysia keyword screen (`scripts/policy_rules.py`, notes in `skills/dtc-reels-editor/references/meta-policy.md`). Its findings are always REVIEW, tagged `[policy:<rule>]`; add `--no-policy` to skip it. Service brands (SS Clinic) get extra rules: superlatives, inducements, testimonials, doctor promotion.
 3. Any BLOCK: stop and tell the human; do not render around it. REVIEW items go to the human review list.
    Hooks and captions come from the doctor's real speech: if a line is flagged, choose a different line from the same transcript, never reword the claim.
 

@@ -13,6 +13,8 @@ This is a keyword screen, not legal or regulatory review."""
 import argparse, json, re, sys, pathlib
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+import policy_rules
 
 def load_texts(p):
     p = pathlib.Path(p)
@@ -31,6 +33,7 @@ def main():
     ap.add_argument("--texts")
     ap.add_argument("--doctor", nargs="?", const="", default=None, metavar="NAME", help="a doctor appears in the videos; give the doctor's name, e.g. --doctor \"Dr Amir\"")
     ap.add_argument("--json", action="store_true")
+    ap.add_argument("--no-policy", action="store_true", help="skip the Meta / Malaysia keyword screen (policy_rules.py)")
     a = ap.parse_args()
 
     bp = ROOT / "brands" / a.brand / "brand.json"
@@ -70,6 +73,16 @@ def main():
             if hit(term, t): out.append(("BLOCK", f"banned term '{term}' in: {t}"))
         for term in b.get("review_terms", []):
             if hit(term, t): out.append(("REVIEW", f"risky wording '{term}' in: {t}"))
+
+    if not a.no_policy:
+        btype = b.get("type", "product")
+        for t in (load_texts(a.texts) if a.texts else []):
+            for rid, why, m in policy_rules.scan(t, btype):
+                out.append(("REVIEW", f"[policy:{rid}] '{m}' in: {t}\n         why: {why}"))
+        if a.texts:
+            out.append(("INFO", "Policy screen is a keyword check against skills/dtc-reels-editor/references/meta-policy.md (not legal advice). Ads on sexual or men's health products must be targeted 18+."))
+        if btype == "service" and a.doctor is not None:
+            out.append(("REVIEW", "Doctor-led ad for a clinic service: MAB services guideline 4.2 and the MMC guideline on dissemination of information limit promoting a practitioner. Brand owner and clinic compliance adviser must confirm."))
 
     if a.json:
         print(json.dumps([{"level": l, "msg": m} for l, m in out], indent=2, ensure_ascii=False))

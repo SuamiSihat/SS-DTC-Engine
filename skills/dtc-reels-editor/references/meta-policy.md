@@ -75,7 +75,7 @@ The human confirms, per batch: each hook and headline wording; any testimonial, 
 - Get the current MAB guidelines (services and products) and MMC guideline from MAB / MMC and confirm the dates.
 - Ask a Malaysian healthcare advertising adviser whether doctor-led men's health ads, testimonials and offers are allowed for each brand.
 - TikTok ad policy for health and sexual health has not been researched yet.
-- Consider adding these checks to `scripts/check_brand.py`: second-person condition phrases, enlargement and performance words, "terbaik" and other superlatives on service ads, guarantee words.
+- DONE 2026-10-21: keyword screen added in `scripts/policy_rules.py`, run by `scripts/check_brand.py` (REVIEW only). Extend the word lists after each batch review; it cannot judge context.
 
 ## Sources
 - Meta, Unrealistic outcomes: https://transparency.meta.com/policies/ad-standards/deceptive-content/unrealistic-outcomes
