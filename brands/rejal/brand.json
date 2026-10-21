@@ -2,11 +2,19 @@
   "name": "REJAL",
   "type": "product",
   "ads_allowed": true,
+  "website": "https://rejal.co/",
+  "parent_website": "https://suamisihat.com.my/",
+  "product_urls": {
+    "bawang_lanang_madu_tualang": "https://rejal.co/product/bawang-lanang-madu-tualang/",
+    "madu_tualang": "https://rejal.co/product/rejal-madu-tualang/",
+    "reviews": "https://rejal.co/testimoni-review-rejal-bawang-lanang-madu-tualang/"
+  },
   "language": "Bahasa Malaysia first, English second",
-  "entity": "05-SSE distributed by SuamiSihat Ecommerce Sdn Bhd",
+  "entity": "05-SSE distributed by SuamiSihat Ecommerce Sdn Bhd (live site footer also lists REJAL HERBSS ENTERPRISE LA0088749-P)",
   "product_facts": [
     "Food (Food Act 1983), never medicine",
-    "Wild Tualang honey, bawang lanang in Tualang honey, stevia",
+    "Wild Tualang honey (Apis dorsata), bawang lanang (pearl garlic) in Tualang honey, stevia",
+    "Live-site products & prices (rejal.co): Bawang Lanang + Madu Tualang 35g (RM 20.00 / reg RM 30.00), Bawang Lanang + Madu Tualang 250g (RM 80.00 / reg RM 100.00), Rejal Madu Tualang (RM 150.00)",
     "Trademark TM only, never (R)",
     "Former name 'Rijal' is retired; do not use",
     "Honey and bawang lanang declared by weight (g/kg); jar capacity is internal"
@@ -86,7 +94,7 @@
   "doctor_consent_ref": null,
   "doctor_allowed_in_ads": "avoid medical framing; ask brand owner",
   "slug": "rejal",
-  "source": "SuamiSihat Design System repo (static/products/<slug>/metadata.json, docs/claims-review/README.md and audit-2026-10-13.md), plus brand guideline v1.0 PDFs (16 Oct 2026)",
+  "source": "SuamiSihat Design System repo (static/products/<slug>/metadata.json, docs/claims-review/README.md and audit-2026-10-13.md), brand guideline v1.0 PDFs (16 Oct 2026), and live site https://rejal.co/",
   "gate": {
     "enforce_doctor_consent": true,
     "block_on_banned_terms": true
@@ -94,7 +102,8 @@
   "staff_claims_review": [
     "Never publish: 'melancarkan darah', 'tenaga batin', immunity, cardiovascular, digestive or nitric-oxide benefits, 'organic', lab values (TPC, diastase, SAC %)",
     "Describe ingredients, origin and use only",
-    "Labels need kcal/kJ nutrition, real serving size, net weight, infant warning on honey; Halal/MeSTI only from the manufacturer's own valid certificate"
+    "Labels need kcal/kJ nutrition, real serving size, net weight, infant warning on honey; Halal/MeSTI only from the manufacturer's own valid certificate",
+    "Caution on live-site copy (rejal.co): do not copy website phrases such as 'Natural Immune Defense', 'Healthy Blood Flow', 'Cardiometabolic Support', 'Melancarkan Penghadaman' or 'madu organik' into video ads."
   ],
   "product_rules": {
     "bawang_lanang_madu_tualang": {
@@ -110,11 +119,28 @@
         "clean"
       ],
       "not_allowed": [
-        "Testosterone, energy, stamina or sexual-health claims",
+        "Testosterone, energy, stamina, immunity, blood-flow or sexual-health claims",
         "Doctor endorsement (food brand; MMC 5.14)",
-        "Green colour cues"
+        "Green colour cues or 'organic' claims"
       ],
       "note": "Faceless / b-roll style fits best: real product, warm low-key light, dark stone or aged wood."
+    },
+    "madu_tualang": {
+      "angles": [
+        "Wild Tualang honey harvested from tropical rainforest Tualang trees (Apis dorsata)",
+        "Raw, unheated honey flavour and aroma profile",
+        "Daily spoonful routine (1-2 teaspoons morning or night)"
+      ],
+      "styles": [
+        "story",
+        "faceless",
+        "clean"
+      ],
+      "not_allowed": [
+        "'Organic' / 'madu organik' wording (banned without certification)",
+        "Immunity, infection, cough/throat treatment, digestive or stamina claims",
+        "Doctor endorsement (MMC 5.14) or green colour cues"
+      ]
     }
   }
 }

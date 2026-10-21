@@ -1,0 +1,22 @@
+{
+  "source": "https://drmitring.com/",
+  "checked_on": "2026-10-21",
+  "units_sold_text": "4.9/5 (2,312 ulasan)",
+  "products": [
+    {
+      "name": "Alpha Starter (2 ring)",
+      "price_rm": 48.90,
+      "regular_price_rm": 60.00
+    },
+    {
+      "name": "Power Duo (4 ring)",
+      "price_rm": 80.00,
+      "regular_price_rm": 146.70
+    },
+    {
+      "name": "Impact Trio (6 ring)",
+      "price_rm": 120.00,
+      "regular_price_rm": 244.50
+    }
+  ]
+}

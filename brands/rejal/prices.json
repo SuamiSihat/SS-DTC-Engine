@@ -1,0 +1,21 @@
+{
+  "source": "https://rejal.co/",
+  "checked_on": "2026-10-21",
+  "units_sold_text": "",
+  "products": [
+    {
+      "name": "Bawang Lanang + Madu Tualang (35g)",
+      "price_rm": 20.00,
+      "regular_price_rm": 30.00
+    },
+    {
+      "name": "Bawang Lanang + Madu Tualang (250g)",
+      "price_rm": 80.00,
+      "regular_price_rm": 100.00
+    },
+    {
+      "name": "Rejal Madu Tualang",
+      "price_rm": 150.00
+    }
+  ]
+}

@@ -7,6 +7,15 @@ description: Load and enforce the brand guideline for the brand named in a batch
 Every batch brief names ONE brand slug (`drmitring`, `mensculine`, `menss`, `pertabi`, `rejal`, `ssclinic`).
 Read `brands/<slug>/brand.json` and `brands/<slug>/README.md` before planning. Never mix brands in one batch.
 
+## Live brand websites
+Parent ecosystem & store hub: https://suamisihat.com.my/
+- `drmitring` (Dr. MIT Ring): https://drmitring.com/ (`brands/drmitring/prices.json`)
+- `menss` (MENSS): https://menss.co/ (`brands/menss/prices.json`)
+- `rejal` (REJAL): https://rejal.co/ (`brands/rejal/prices.json`)
+- `ssclinic` (SS Clinic): https://suamisihat.clinic/ (no `prices.json`: no offers in Educational mode, no discounts in KOL ad mode)
+
+**Important**: Use the live websites for current pack/bundle prices (`prices.json`) and real product B-roll, NOT as pre-cleared ad copy. Some live pages (`menss.co`, `rejal.co`, `suamisihat.clinic`) contain phrases that `brand.json` and `check_brand.py` block or flag for review. Always follow `brand.json` and `check_brand.py`.
+
 ## Source of truth
 `scripts/sync_brand_assets.py` copies the latest logos, patterns, doctor-consent status and staff claims notes from the SuamiSihat Design System repo (`DESIGN_SYSTEM_ROOT`). Run it at the start of every batch. Doctor consent comes from the design system's `metadata.json`, not from this repo.
 
@@ -26,11 +35,11 @@ Read `brands/<slug>/brand.json` and `brands/<slug>/README.md` before planning. N
 - Voice and `avoid`: follow both.
 
 ## Known differences that matter for video
-- **Dr. MIT Ring**: always written 'Dr. MIT Ring' (M.I.T. = Male Intimacy Technology). Lime text/captions on black are OK; never white-on-lime; yellow only as the count chip on black; wordmark pill on black. Doctor-led ads are ALLOWED but only with SuamiSihat-appointed doctors (`appointed_doctors` in brand.json); pass the name: `check_brand.py --doctor "Dr Amir"`. Performance wording (erection, hardness, stamina, 'tahan lama') is allowed. 'Patented', 'clinically proven', 'no side effects' and 'andrologically tested' stay screened (BLOCK) because the only test evidence on file (First Article Report AMS-26043) covers material, hardness and dimensions, not efficacy or safety. Decision log: brand.json.
-- **SS Clinic**: two content modes (decision 2026-10-21, `content_modes` in brand.json). **Educational** (default): real SS Clinic doctor, organic posts, identified with a lower third, neutral close, NO clinic CTA, offer or testimonial. **KOL ad**: hired KOL only, never a real doctor; KKLIU number per posting in the spec; no testimonials about treatment, no discounts, before/after or superlatives. No cure/speed claims, no countdowns or 'last slots' in either mode. If the brief does not name the mode, ask.
-- **REJAL**: food, never medicine. No 'ubat', 'kuat', 'tenaga batin', no green, no (R), no AI-rendered packaging. Product: Bawang Lanang + Madu Tualang; no testosterone, energy or stamina claims and no doctor endorsement (`product_rules` in brand.json).
-- **MENSS**: no treatment claims for devices; no size or performance promises. Products: Penile Pump, FRESH Wash, MENSS Ring (blue). Per-product angles and styles: `product_rules` in brand.json. MENSS Ring and Dr. MIT Ring (green) never share a batch or video.
-- **Mensculine**: English-first, no slang. **PERTABI**: not an ad brand (community partner); engine refuses product-ad batches.
+- **Dr. MIT Ring** (`https://drmitring.com/`): always written 'Dr. MIT Ring' (M.I.T. = Male Intimacy Technology). Lime text/captions on black are OK; never white-on-lime; yellow only as the count chip on black; wordmark pill on black. Doctor-led ads are ALLOWED but only with SuamiSihat-appointed doctors (`appointed_doctors` in brand.json); pass the name: `check_brand.py --doctor "Dr Amir"`. Performance wording (erection, hardness, stamina, 'tahan lama') is allowed. 'Patented', 'clinically proven', 'no side effects' and 'andrologically tested' stay screened (BLOCK) because the only test evidence on file (First Article Report AMS-26043) covers material, hardness and dimensions, not efficacy or safety. Decision log: brand.json.
+- **SS Clinic** (`https://suamisihat.clinic/`): two content modes (decision 2026-10-21, `content_modes` in brand.json). **Educational** (default): real SS Clinic doctor, organic posts, identified with a lower third, neutral close, NO clinic CTA, offer or testimonial. **KOL ad**: hired KOL only, never a real doctor; KKLIU number per posting in the spec; no testimonials about treatment, no discounts, before/after or superlatives. No cure/speed claims, no countdowns or 'last slots' in either mode. Do not copy superlatives ("The Only Men's Health Clinic..."), competitor comparisons or booking CTAs from `suamisihat.clinic` into doctor videos. If the brief does not name the mode, ask.
+- **REJAL** (`https://rejal.co/`): food, never medicine. No 'ubat', 'kuat', 'tenaga batin', no green, no (R), no AI-rendered packaging. Products: Bawang Lanang + Madu Tualang (35g, 250g) and Rejal Madu Tualang; no testosterone, energy, stamina, immunity, blood-flow, cardiometabolic or digestive claims, no 'organic' / 'madu organik' claims (even though `rejal.co` uses those phrases), and no doctor endorsement (`product_rules` in brand.json).
+- **MENSS** (`https://menss.co/`): no treatment claims for devices; no size or performance promises. Products: **Menss Care Cream** (live on `menss.co`, KKM `NOT250807222K`; keep within daily intimate skin care / cosmetic scope, never copy 'Pancut Awal' or unapproved clinical/erection claims from `menss.co`), Penile Pump, FRESH Wash, MENSS Ring (blue). Per-product angles and styles: `product_rules` in brand.json. MENSS Ring and Dr. MIT Ring (green) never share a batch or video.
+- **Mensculine**: English-first, no slang (international export counterpart to Menss Care Cream). **PERTABI**: not an ad brand (community partner); engine refuses product-ad batches.
 
 All six guidelines mark claims as TBC. For brands other than DMR, doctor consent and claims sign-off come from the brand owner (branding@suamisihat.com).
 

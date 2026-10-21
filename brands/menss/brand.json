@@ -2,10 +2,13 @@
   "name": "MENSS",
   "type": "product",
   "ads_allowed": true,
+  "website": "https://menss.co/",
+  "parent_website": "https://suamisihat.com.my/",
   "language": "Modern, direct; BM/English not specified",
-  "entity": "05-SSE SuamiSihat E-Commerce with 02-SSC SS Clinic",
+  "entity": "05-SSE SuamiSihat E-Commerce (202501020197 / 1621610-T) with 02-SSC SS Clinic",
   "product_facts": [
-    "Range: FRESH Wash (personal care), Penile Pump (vacuum device, integrated with SS Clinic doctor-supervised protocols), Ring Series (silicone rings), Noctis and Scensual (in development, no approved assets)",
+    "Range: Menss Care Cream (live on menss.co and suamisihat.com.my; topical daily intimate skin care cream with Tongkat Ali Physta and BioKesum, KKM notification NOT250807222K), FRESH Wash (personal care), Penile Pump (vacuum device, integrated with SS Clinic doctor-supervised protocols), Ring Series (silicone rings), Noctis and Scensual (in development, no approved assets)",
+    "Live-site bundles for Menss Care Cream (menss.co): Sologrip (1 Unit, RM 89.00 / reg RM 99.00), Double Power (2 Unit, RM 169.00 / reg RM 198.00), Triple Impact (3 Unit, RM 249.00 / reg RM 297.00)",
     "Trademark: TBC"
   ],
   "colors": {
@@ -46,14 +49,22 @@
     "Treatment claims for devices",
     "Size or performance promises"
   ],
-  "banned_terms": [],
+  "banned_terms": [
+    "pancut",
+    "pancut awal"
+  ],
   "review_terms": [
     "besar",
+    "biokesum",
+    "clinically backed",
     "cure",
+    "kajian klinikal",
+    "kekerasan",
     "kuat",
     "medical grade",
     "medical-grade",
     "performance",
+    "physta",
     "prestasi",
     "rawat",
     "saiz",
@@ -67,18 +78,39 @@
   "doctor_consent_ref": null,
   "doctor_allowed_in_ads": "not addressed; check with SS Clinic rules",
   "slug": "menss",
-  "source": "SuamiSihat Design System repo (static/products/<slug>/metadata.json, docs/claims-review/README.md and audit-2026-10-13.md), plus brand guideline v1.0 PDFs (16 Oct 2026)",
+  "source": "SuamiSihat Design System repo (static/products/<slug>/metadata.json, docs/claims-review/README.md and audit-2026-10-13.md), brand guideline v1.0 PDFs (16 Oct 2026), and live site https://menss.co/",
   "gate": {
     "enforce_doctor_consent": true,
     "block_on_banned_terms": true
   },
   "staff_claims_review": [
-    "Device descriptions such as 'medical-grade' or 'vascular rehabilitation' need registration evidence before public use"
+    "Device descriptions such as 'medical-grade' or 'vascular rehabilitation' need registration evidence before public use",
+    "Menss Care Cream (live on menss.co, KKM NOT250807222K): notified as a cosmetic. Do not copy 'Pancut Awal', erection/hardness or unapproved 'kajian klinikal' / Physta / BioKesum efficacy claims from menss.co into ad scripts without brand-owner sign-off."
   ],
   "planned": [
     "White-label MENSS ring in blue, using the same ring tooling (FAI AMS-26043, which is marked MENSS). Future plan, no approved assets yet."
   ],
   "product_rules": {
+    "care_cream": {
+      "name": "Menss Care Cream",
+      "kkm_not": "NOT250807222K",
+      "angles": [
+        "Daily intimate skin care, hydration and moisture barrier protection",
+        "Comfortable, non-hot and non-numbing formula",
+        "Simple application routine (after shower / before sleep, or 1-2 hours prior, external use only)",
+        "Discreet packaging and KKM notification (NOT250807222K)"
+      ],
+      "styles": [
+        "clean",
+        "story"
+      ],
+      "not_allowed": [
+        "Crude slang ('pancut awal', 'cepat pancut')",
+        "Medical, cure or erectile-dysfunction treatment claims",
+        "Unapproved clinical-study or Physta / BioKesum efficacy claims without licensor and brand-owner sign-off"
+      ],
+      "note": "Live product on https://menss.co/ and https://suamisihat.com.my/ ('Fresh Peak' / Menss Care Cream). Keep copy within NPRA cosmetic scope unless brand owner signs off."
+    },
     "penile_pump": {
       "angles": [
         "How it works, step by step",

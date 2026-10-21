@@ -1,5 +1,7 @@
 # Mensculine
-Source: SuamiSihat Design System v3.6.1, brand guideline v1.0 (16 Oct 2026). Machine-readable rules are in `brand.json`.
+- **Parent ecosystem hub**: https://suamisihat.com.my/
+- **Note**: Mensculine is the international/export topical care brand. For Malaysia domestic Care Cream ads, see **MENSS** (`brands/menss/`, live on https://menss.co/).
+- **Source**: SuamiSihat Design System v3.6.1, brand guideline v1.0 (16 Oct 2026). Machine-readable rules are in `brand.json`.
 
 Put the supplied brand files here (download the latest from the SuamiSihat Design System, staff login required; never reuse an old copy):
 - `logos/`: official logo files listed in brand.json -> logo.files

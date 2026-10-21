@@ -2,12 +2,18 @@
   "name": "Dr. MIT Ring",
   "type": "product",
   "ads_allowed": true,
+  "website": "https://drmitring.com/",
+  "parent_website": "https://suamisihat.com.my/",
+  "review_pages": [
+    "https://drmitring.com/testimoni-review-dr-mit-ring/"
+  ],
   "language": "Bahasa Malaysia first",
-  "entity": "05-SSE SuamiSihat Ecommerce Sdn Bhd",
+  "entity": "05-SSE SuamiSihat Ecommerce Sdn Bhd (1621610-T)",
   "product_facts": [
     "MDA-registered male intimacy technology device (Act 737, Path B), update in progress",
     "Not an ingestible medicine",
     "2 rings per box, foil sachets, reuse 3 to 5 times",
+    "Live-site bundles (drmitring.com): Alpha Starter (2 rings, RM 48.90 / reg RM 60.00), Power Duo (4 rings, RM 80.00 / reg RM 146.70), Impact Trio (6 rings, RM 120.00 / reg RM 244.50)",
     "Credit line: Direka oleh SuamiSihat",
     "Trademark DR MIT RING (R) TM2023032015 class 10"
   ],
@@ -77,7 +83,7 @@
   "doctor_consent_ref": null,
   "doctor_allowed_in_ads": "yes, but only SuamiSihat-appointed doctors (see appointed_doctors). Head of Creative decision, 2026-10-16.",
   "slug": "drmitring",
-  "source": "SuamiSihat Design System repo (static/products/<slug>/metadata.json, docs/claims-review/README.md and audit-2026-10-13.md), plus brand guideline v1.0 PDFs (16 Oct 2026)",
+  "source": "SuamiSihat Design System repo (static/products/<slug>/metadata.json, docs/claims-review/README.md and audit-2026-10-13.md), brand guideline v1.0 PDFs (16 Oct 2026), and live site https://drmitring.com/",
   "gate": {
     "enforce_doctor_consent": false,
     "require_appointed_doctor": true,

@@ -2,11 +2,13 @@
   "name": "Mensculine",
   "type": "product",
   "ads_allowed": true,
+  "website": null,
+  "parent_website": "https://suamisihat.com.my/",
   "language": "International English",
   "entity": "05-SSE SuamiSihat E-Commerce (international)",
   "product_facts": [
     "Export and cross-border marketplaces",
-    "Lead product: Mensculine Care Cream (topical)",
+    "Lead product: Mensculine Care Cream (topical; Malaysia domestic counterpart is Menss Care Cream on https://menss.co/)",
     "Trademark: TBC"
   ],
   "colors": {

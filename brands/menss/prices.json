@@ -1,0 +1,22 @@
+{
+  "source": "https://menss.co/",
+  "checked_on": "2026-10-21",
+  "units_sold_text": "",
+  "products": [
+    {
+      "name": "Menss Care Cream - Sologrip (1 Unit)",
+      "price_rm": 89.00,
+      "regular_price_rm": 99.00
+    },
+    {
+      "name": "Menss Care Cream - Double Power (2 Unit)",
+      "price_rm": 169.00,
+      "regular_price_rm": 198.00
+    },
+    {
+      "name": "Menss Care Cream - Triple Impact (3 Unit)",
+      "price_rm": 249.00,
+      "regular_price_rm": 297.00
+    }
+  ]
+}

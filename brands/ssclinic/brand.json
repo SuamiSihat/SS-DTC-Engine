@@ -2,10 +2,12 @@
   "name": "SS Clinic",
   "type": "service",
   "ads_allowed": true,
+  "website": "https://suamisihat.clinic/",
+  "parent_website": "https://suamisihat.com.my/",
   "language": "Educated, conversational Malay",
   "entity": "SuamiSihat Clinic Sdn. Bhd.",
   "product_facts": [
-    "Clinics: Subang Jaya and Kota Bharu",
+    "Clinics: Subang Jaya (Lembah Klang) and Kota Bharu (Pantai Timur), open daily till 5pm; MMC-registered doctors, KKM-licensed",
     "Consultations, health checks, telehealth, personal care plans",
     "Approach: check first, assessment before any treatment",
     "Programmes: ANDROLAB RX; devices: MENSS"
@@ -84,7 +86,7 @@
   "doctor_consent_ref": null,
   "doctor_allowed_in_ads": "yes, in Educational mode only: real SS Clinic doctor, organic educational posts, identified with a lower third (name and title), no clinic CTA. Never in clinic advertisements (KOL ad mode). Head of Creative decisions 2026-10-16 and 2026-10-21.",
   "slug": "ssclinic",
-  "source": "SuamiSihat Design System repo (static/products/<slug>/metadata.json, docs/claims-review/README.md and audit-2026-10-13.md), plus brand guideline v1.0 PDFs (16 Oct 2026)",
+  "source": "SuamiSihat Design System repo (static/products/<slug>/metadata.json, docs/claims-review/README.md and audit-2026-10-13.md), brand guideline v1.0 PDFs (16 Oct 2026), and live site https://suamisihat.clinic/",
   "gate": {
     "enforce_doctor_consent": false,
     "block_on_banned_terms": true,
@@ -94,7 +96,8 @@
     "Permanently blacklisted SS Clinic copy (brand-voice.md, SSC-STR-001): 'Mati pucuk', 'Lemah batin', 'Pancut awal', 'Keras dalam 1 sesi!'",
     "Prescription medicines (e.g. tadalafil under ANDROLAB RX) cannot be advertised to the public in Malaysia; keep RX content internal",
     "Compliant alternatives: 'Penurunan tenaga lelaki', 'Kesihatan intim lelaki', 'Vitaliti suami', 'Stamina dan daya tahan'",
-    "Use 'semulajadi', not 'fitrah', in ad copy"
+    "Use 'semulajadi', not 'fitrah', in ad copy",
+    "Caution on live-site copy (suamisihat.clinic): do not copy website superlatives ('The Only Men's Health Clinic...'), competitor comparisons ('While other clinics push...'), review counts or assessment CTAs into Educational doctor videos."
   ],
   "appointed_doctors": [
     "Dr Rak"
