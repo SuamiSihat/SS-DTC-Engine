@@ -6,12 +6,13 @@ Spec: see skills/dtc-reels-editor/references/spec-format.md
 Needs ffmpeg on PATH, Pillow. Fonts: Poppins installed system-wide. Writes renders/<name>.mp4 and
 renders/<name>.timeline.json (used by check_sync.py --timeline).
 """
-import argparse, json, os, pathlib, re, subprocess, sys
+import argparse, json, os, pathlib, re, subprocess, sys, types
 from PIL import Image, ImageDraw, ImageFont
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import look_filter
+import broll
 LOOK = None  # set in main() from spec["look"]; None = no film look (default)
 W, H = 1080, 1920
 # Safe area for Instagram Reels + TikTok at 1080x1920 (see skills/dtc-broll, references/safe-zones.md)
@@ -24,6 +25,13 @@ CAP_BOTTOM = SAFE_B                 # captions end here
 CAP_SIZE = 70
 HEAD_BOTTOM_MAX = 1105               # headline/lower third must end above the caption band
 def head_y(h): return min(OVL_Y, HEAD_BOTTOM_MAX - h)
+# Hook C layout: headline on navy at the top, doctor in a rounded card so the face stays inside the safe area
+CARD_W, CARD_H, CARD_X, CARD_Y, CARD_R = 864, 860, 108, 480, 40
+CARD_MASK = None  # set in main()
+def make_card_mask(path):
+    m = Image.new("L", (CARD_W, CARD_H), 0)
+    ImageDraw.Draw(m).rounded_rectangle([0, 0, CARD_W - 1, CARD_H - 1], radius=CARD_R, fill=255)
+    m.save(path)
 NAVY, CNAVY, GOLD, AZURE, WHITE = (2, 32, 87), (15, 76, 117), (244, 162, 97), (33, 161, 247), (255, 255, 255)
 FONT_DIRS = [r"C:\Windows\Fonts", os.path.expandvars(r"%LOCALAPPDATA%\Microsoft\Windows\Fonts"), "/usr/share/fonts/truetype/poppins"]
 
@@ -205,20 +213,25 @@ def render(name, items, overlays, ass_words, fixes, out_dir, work, fps, preview=
                 vf.append(f"{base},scale={W}:{H}:flags=lanczos,setsar=1[{lab}]")
             elif it["mode"] == "tight":
                 vf.append(f"{base},crop=iw/1.22:ih/1.22:(iw-iw/1.22)*0.5:(ih-ih/1.22)*0.05,scale={W}:{H}:flags=lanczos,setsar=1[{lab}]")
-            else:  # split: animated navy panel on top, doctor below
+            else:  # split (hook C): navy background, headline on top, doctor in a rounded card (face inside the safe area)
                 g = len(inputs)
                 cmd += ["-f", "lavfi", "-t", f"{d + 0.1:.3f}", "-i", f"gradients=s={W}x{H}:c0=0x022057:c1=0x0F4C75:x0=0:y0=0:x1={W}:y1={H}:speed=0.01:type=linear:nb_colors=2"]
                 inputs.append(1)
-                vf.append(f"{base},crop=iw:ih*0.56:0:ih*0.03,scale={W}:-2:flags=lanczos,setsar=1[dr{idx}]")
-                if LOOK:  # film look on the insert panel only; the doctor stays clean
+                mk = len(inputs)
+                cmd += ["-loop", "1", "-framerate", str(fps), "-t", f"{d + 0.1:.3f}", "-i", str(CARD_MASK)]
+                inputs.append(1)
+                vf.append(f"{base},crop=iw:iw*{CARD_H}/{CARD_W}:0:ih*0.03,scale={CARD_W}:{CARD_H}:flags=lanczos,setsar=1,format=rgba[drp{idx}]")
+                vf.append(f"[{mk}:v]fps={fps},trim=end_frame={nfr},setpts=PTS-STARTPTS,format=gray[mk{idx}]")
+                vf.append(f"[drp{idx}][mk{idx}]alphamerge[dr{idx}]")
+                if LOOK:  # film look on the background only; the doctor stays clean
                     vf.append(f"[{g}:v]fps={fps},trim=end_frame={nfr},setpts=PTS-STARTPTS,format=yuv420p,setsar=1[lk{idx}_in]")
                     vf.append(look_filter.look_chain(LOOK, W, H, fps).replace("lk_", f"lk{idx}_"))
                     vf.append(f"[lk{idx}_out]null[bg{idx}]")
                 else:
                     vf.append(f"[{g}:v]fps={fps},trim=end_frame={nfr},setpts=PTS-STARTPTS,format=yuv420p,setsar=1[bg{idx}]")
-                vf.append(f"[bg{idx}][dr{idx}]overlay=0:main_h-overlay_h:shortest=1[{lab}]")
+                vf.append(f"[bg{idx}][dr{idx}]overlay={CARD_X}:{CARD_Y}:shortest=1,format=yuv420p[{lab}]")
             vf.append(f"[{vi}:a:0]asetpts=PTS-STARTPTS,aresample=48000,aformat=channel_layouts=stereo,apad=whole_dur={d:.5f},atrim=0:{d:.5f},asetpts=PTS-STARTPTS,afade=t=in:st=0:d=0.02,afade=t=out:st={max(0,d-0.04):.3f}:d=0.04[a{idx}]")
-            timeline.append({"out_start": round(t_out, 3), "dur": round(d, 3), "src": it["src"], "src_start": round(it["s"], 3)})
+            timeline.append({"out_start": round(t_out, 3), "dur": round(d, 3), "src": it["src"], "src_start": round(it["s"], 3), "mode": it["mode"]})
         else:
             d = round(it["dur"] * fps) / fps
             cmd += ["-loop", "1", "-framerate", str(fps), "-t", f"{d:.3f}", "-i", it["png"]]; inputs.append(1)
@@ -235,7 +248,9 @@ def render(name, items, overlays, ass_words, fixes, out_dir, work, fps, preview=
         i = len(inputs)
         dur = ov["end"] - ov["start"]
         cmd += ["-loop", "1", "-framerate", str(fps), "-t", f"{dur:.3f}", "-i", ov["png"]]; inputs.append(1)
-        vf.append(f"[{i}:v]format=rgba,fade=t=in:st=0:d=0.2:alpha=1,fade=t=out:st={max(0,dur-0.2):.3f}:d=0.2:alpha=1,setpts=PTS+{ov['start']:.3f}/TB[ov{k}]")
+        fi, fo = ov.get("fi", 0.2), ov.get("fo", 0.2)
+        fades = (f"fade=t=in:st=0:d={fi}:alpha=1," if fi > 0 else "") + (f"fade=t=out:st={max(0,dur-fo):.3f}:d={fo}:alpha=1," if fo > 0 else "")
+        vf.append(f"[{i}:v]format=rgba,{fades}setpts=PTS+{ov['start']:.3f}/TB[ov{k}]")
         vf.append(f"[{cur}][ov{k}]overlay={ov['x']}:{ov['y']}:eof_action=pass:enable='between(t,{ov['start']:.3f},{ov['end']:.3f})'[vo{k}]")
         cur = f"vo{k}"
     ass_path = work / f"{name}.ass"
@@ -259,7 +274,14 @@ def render(name, items, overlays, ass_words, fixes, out_dir, work, fps, preview=
     probe = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height", "-of", "csv=p=0", str(out)], capture_output=True, text=True).stdout.strip()
     if probe != f"{W},{H}":
         raise SystemExit(f"{name}: output is {probe}, must be {W},{H}")
-    (out_dir / f"{name}.timeline.json").write_text(json.dumps({"file": out.name, "total": round(total, 3), "items": timeline}, indent=2), encoding="utf-8")
+    ovl = []
+    for ov in overlays:
+        w_, h_ = Image.open(ov["png"]).size
+        ovl.append({"name": pathlib.Path(ov["png"]).name, "kind": ov.get("kind", "overlay"), "x": ov["x"], "y": ov["y"], "w": w_, "h": h_, "start": round(ov["start"], 3), "end": round(ov["end"], 3)})
+    hidden = [[o["start"], o["end"]] for o in ovl if o["kind"] == "quote"]
+    layout = {"safe": [SAFE_L, SAFE_T, SAFE_R, SAFE_B], "overlays": ovl, "caption_band": [SAFE_L, CAP_BOTTOM - 130, SAFE_R, CAP_BOTTOM], "captions_hidden": hidden,
+              "card": [CARD_X, CARD_Y, CARD_W, CARD_H]}
+    (out_dir / f"{name}.timeline.json").write_text(json.dumps({"file": out.name, "total": round(total, 3), "items": timeline, "layout": layout}, indent=2), encoding="utf-8")
     return out, total
 
 def main():
@@ -271,11 +293,12 @@ def main():
     work = batch / "work"; out_dir = batch / "renders"; out_dir.mkdir(exist_ok=True); work.mkdir(exist_ok=True)
     fps = spec.get("fps", 30)
     brand = spec["brand"]
-    global LOOK
+    global LOOK, CARD_MASK
     LOOK = look_filter.load_look(brand, spec.get("look_preset")) if spec.get("look") == "editorial" else None
     logo = ROOT / "brands" / brand / "design-system" / "logos" / "logo_ssc_primary_dark.png"
     if "logo" in spec: logo = ROOT / spec["logo"]
     ec = spec["end_card"]; lt = spec["lower_third"]
+    CARD_MASK = work / "cardmask.png"; make_card_mask(CARD_MASK)
     make_endcard(work / "endcard.png", logo, ec["line"], ec["cta"])
     ltw, lth = make_lower_third(work / "lowerthird.png", lt["name"], lt["title"])
     for clip in spec["clips"]:
@@ -312,7 +335,7 @@ def main():
             items, ass, body = mk_items(opener=op)
             od = op[1] - op[0]
             hl = work / f"hl_{clip['id']}_B.png"; hw, hh = make_headline(hl, hk["headline"])
-            ovs = [{"png": str(hl), "x": OVL_X, "y": head_y(hh), "start": 0.1, "end": max(1.5, od - 0.1)},
+            ovs = [{"png": str(hl), "x": OVL_X, "y": HEAD_Y_TOP, "start": 0.1, "end": max(1.5, od - 0.1)},  # opener is a tight shot: face top is about y 460, so the headline goes above it
                    {"png": str(work / "lowerthird.png"), "x": OVL_X, "y": head_y(lth), "start": od + 0.5, "end": od + 4.5}]
             versions["B_Hook-ColdOpen"] = (items, ovs, ass)
         if "C" in a.versions and "C" in clip.get("hooks", {}):
@@ -321,11 +344,12 @@ def main():
             od = items[0]["e"] - items[0]["s"]
             hl = work / f"hl_{clip['id']}_C.png"; make_headline(hl, hk["headline"], size=72)
             ovs = [{"png": str(hl), "x": OVL_X, "y": HEAD_Y_TOP, "start": 0.1, "end": max(1.5, od - 0.1)},
-                   {"png": str(work / "lowerthird.png"), "x": OVL_X, "y": head_y(lth), "start": od + 0.4, "end": od + 4.4}]
+                   {"png": str(work / "lowerthird.png"), "x": OVL_X, "y": HEAD_Y_TOP, "start": od + 0.4, "end": od + 4.4}]
             versions["C_Hook-TopicVisual"] = (items, ovs, ass)
         for vname, (items, ovs, ass) in versions.items():
             name = f"{name_base}_{vname}"
             print("render", name, flush=True)
+            ass = broll.apply_quotes(types.SimpleNamespace(**globals()), clip, words, items, ovs, ass, work, vname[0])
             out, total = render(name, items, ovs, ass, fixes, out_dir, work, fps, a.preview)
             print(f"  -> {out.name} {total:.1f}s", flush=True)
 

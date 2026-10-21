@@ -5,7 +5,12 @@ description: Plan and place b-roll, review/testimonial quote popups, safe-zone c
 
 # DTC b-roll director
 
-Called by `dtc-reels-editor` at the Design step, after transcripts and cuts exist. Output is a `broll` plan per clip inside `work/spec.json` (or `spec2.json`) plus any assets, never a change to the cut or the words.
+Called by `dtc-reels-editor` at the Design step, after transcripts and cuts exist. Output is a `broll` plan per clip inside `work/spec.json` plus any assets, never a change to the cut or the words.
+
+Tools (all in `scripts/`):
+- `broll_suggest.py spec.json [--only 001] [--product ring,mit]` writes `work/broll_plan_<id>.md`: each kept sentence tagged (quote, myth, number, steps, concept, metaphor, product) with a suggested b-roll. Keyword rules only, so a person confirms each item.
+- `broll.py` (used by `render_batch.py`) renders the quote popup from `"broll": [{"kind": "quote", "src": [start_s, end_s], "text": "<verbatim review>", "by": "Pelanggan, WhatsApp"}]` in the clip spec. Words light up in time with the speech, captions are hidden while it shows, a headline or lower third that overlaps it is ended early, and it is skipped in the hook C card layout.
+- `check_layout.py renders/<name>.timeline.json ...` checks the safe area, the face and the 1080x1920 size from the layout `render_batch.py` records. Run it on every file in QA, next to `sync-qa`.
 
 ## 1. When b-roll is used
 B-roll exists to support or enhance what the doctor is saying at that moment. Every item is tied to a spoken phrase (word timestamps from `work/transcripts/`). No phrase, no b-roll. If the explanation is already clear on the doctor, add nothing.
@@ -45,7 +50,7 @@ Safe area (union of Reels and TikTok, from third-party guides that cite platform
 - Left and right: keep 120 px clear (x from 120 to 960). On TikTok the right 300 px wide column from y = 840 down holds action buttons: no text there.
 - Safe rectangle: x 120-960, y 270-1248. Prefer y 300-1150 for text.
 
-Face rule: use the face track (`work/facetrack_<id>.json`, centre fx, fy per 0.5 s from `scripts/face_track.py`). Treat a box of about 440 x 560 px around the face centre, plus 40 px margin, as a no-go zone for every overlay at that time. If the face track is missing for a clip, run it first.
+Face rule: use the face track (`work/facetrack_<id>.json`, centre fx, fy per 0.5 s from `scripts/face_track.py`). The no-go box is 400 px wide, 240 px above and 200 px below the face centre at wide framing (scaled 1.22x for tight shots and 0.8x in the hook C card); `check_layout.py` uses exactly this box. It is conservative: a FAIL is a reason to look at the frame, and a person decides when the frame is clearly fine. If the face track is missing for a clip, run it first.
 
 Placement order for each overlay (subtitle, lower third, popup, b-roll):
 1. Inside the safe rectangle, outside the face no-go zone.
@@ -54,7 +59,12 @@ Placement order for each overlay (subtitle, lower third, popup, b-roll):
 4. Popup / b-roll: as a panel or card in the free area, or a split layout where the doctor stays fully visible. Never a full-frame cover over the doctor except a deliberate hook (A/B/C) cut.
 5. If two things need the same spot, keep the subtitle and move or shorten the other.
 
-Known gap: the current `scripts/render_batch.py` places captions near y = 1470 and the headline and lower third at y = 960 to 990, which is outside the bottom safe margin and can sit on the face. Fix these positions from the safe rectangle and the face track before the next batch.
+Current layout in `render_batch.py` (checked on the Dr Rak test clip):
+- Captions: bottom at y 1248, 70 pt, max 840 px wide, 3 words per group.
+- Headline and lower third: y 925 (below the chin in wide shots), the headline shrinks to fit 2 lines. Hook B opens on a tight shot, so its headline goes at y 285 above the head.
+- Hook C: headline on navy at y 285, the doctor in a rounded card (x 108, y 480, 864 x 860) so the face sits at about y 800-1100. The lower third goes at y 285 after the headline.
+- Quote popup: bottom of the safe area (y about 1006 to 1236), captions hidden while it shows.
+Known limits: the doctor leaning forward can bring the chin into the caption band for a moment, and the hook B headline sits very close to the hair in the tight opener. Check those frames by eye.
 
 ## 4. Output format
 - Final video is always 1080x1920, never 2K or 4K. Downscale sources to 1080 wide before compositing; never output above 1920 tall.

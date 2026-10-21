@@ -17,7 +17,7 @@ Run one batch end to end. Read the brief in `briefs/<batch>.md` first; it names 
 5. **Design**: call `dtc-broll` for b-roll, review quote popups and safe-zone placement. Hook headline, word-by-word captions with the keyword in lime, claim chips ("Bukan ubat / Bukan minyak" style), b-roll from the brand's live site (brands/<slug>/README.md), name tag, offer card with prices from `brands/<slug>/prices.json`.
 6. **Hooks**: 3 per master (A master, B cold open, C topic visual, D proof). Cut the doctor out (compare cutout models, pick cleanest edges) and place him over the topic-matched background (`hook-backgrounds`). Hook audio is the hook's own clip.
 7. **Render** 1080x1920 MP4. Send ALL hook notes before starting the batch render; do not restart renders mid-way.
-8. **QA**: frame grid check, then `sync-qa` on every file. Fix and re-run until 100% pass.
+8. **QA**: frame grid check, `scripts/check_layout.py` (safe area, face, 1080x1920), then `sync-qa` on every file. Fix and re-run until 100% pass.
 9. **Package** with `ad-packaging` (folders, names, Ad Index.csv). Copy to the NAS deliver folder only after a person signs off.
 10. **Learn**: append new lessons to `lessons.md` and update the relevant skill.
 

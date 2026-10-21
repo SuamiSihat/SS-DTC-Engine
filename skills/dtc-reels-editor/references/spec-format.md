@@ -11,6 +11,7 @@
    "fixes": {"sarab": "saraf"},                    // spelling fixes for captions
    "segments": [[start, end], ...],                // kept source ranges, snapped to word boundaries
    "headline": "*Mitos* atau *fakta?* ...",        // *gold* keywords
+   "broll": [{"kind": "quote", "src": [s, e], "text": "<verbatim real review>", "by": "Pelanggan, WhatsApp"}],  // optional, see skills/dtc-broll
    "hooks": {"B": {"segment": [s, e], "headline": "..."}, "C": {"headline": "..."}}
  }]
 }
