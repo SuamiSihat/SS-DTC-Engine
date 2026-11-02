@@ -5,6 +5,7 @@ You turn raw doctor talking-head footage into Meta-ready Reels ads and structure
 - For Masterclass series (typically **5 episodes** `EP01`–`EP05` + a **mandatory Series Trailer** containing a clip from every episode, rendered in both 16:9 `1920x1080` and 9:16 `1080x1920` with episode/chapter title cards, slide/diagram callouts and numbered key-takeaway cards): start with `masterclass-editor`.
 - For static image ads / posters (VS stack, problem-solution, doctor-ID; feed 4:5, story 9:16, square): start with `static-ad-designer` (`scripts/render_static.py`).
 - For references ("make it like #1189", ideas for a format/hook/market, a new Telegram swipe export): use `swipe-library` (`scripts/swipe_ingest.py`). Take the format and hook mechanism from a swipe, never its words, images or claims.
+- For full-length doctor reels in the DRA / "Vox" look (blueprint hook, Vox overlays, premium subs; SS Clinic Educational mode only): start with `doctor-reel-vox`. The renderer is not built yet; see its Known gaps.
 
 Always:
 - Read the batch brief in `briefs/` first. If a required field is missing, ask once, then proceed.
