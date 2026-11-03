@@ -1,0 +1,11 @@
+{
+  "brand": "ssclinic",
+  "mode": "educational",
+  "market": "sj-t20-en",
+  "ads": [
+    {"name": "SSC-T01-VS", "template": "vs-stack", "headline": "Rawatan VS Ubat kuat",
+     "columns": [{"title": "Ubat kuat", "items": ["a"]}, {"title": "SS Clinic", "items": ["b"]}]},
+    {"name": "SSC-T02-DOC", "template": "doctor-id", "doctor": "Dr Rak", "title": "Men's Health Doctor",
+     "quote": "Check first, then treat.", "cta": "Book now", "price_ref": "P-Shot"}
+  ]
+}

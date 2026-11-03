@@ -15,6 +15,12 @@ Requested by:
 
 ## Creative direction
 - Goal (what should the viewer feel/do in the first 3 s): 
+- Market: kb-hardsell / sj-t20-en / wives / general-bm / international (drives language, text density and design)
+- Language: BM / English / both
+- Funnel stage: TOFU / MOFU / BOFU
+- Inspired by (swipe IDs, see swipe-library skill; paste the table from `swipe_ingest.py refs <ids>`): 
+- What NOT to take from those references (risky elements): 
+- Outputs: videos / statics (static-ad-designer) / both
 - Hooks per video: 3 (cold open, topic visual, proof) unless stated
 - Backgrounds: match the topic (see hook-backgrounds skill). Not generic brand animation.
 - Product zoom: yes / no
