@@ -1,0 +1,45 @@
+{
+  "brand": "drmitring",
+  "batch": "static-test",
+  "market": "kb-hardsell",
+  "inspired_by": [1046, 969, 741],
+  "sizes": ["feed", "story", "square"],
+  "ads": [
+    {
+      "name": "DMR-S01-VS",
+      "template": "vs-stack",
+      "inspired_by": [1046, 1268],
+      "eyebrow": "Pilihan suami",
+      "headline": "Ubat kuat VS Dr. MIT Ring",
+      "columns": [
+        {"title": "Ubat kuat", "verdict": "bad", "items": ["Perlu ditelan", "Tunggu kesan", "Ramai risau bahan"]},
+        {"title": "Dr. MIT Ring", "verdict": "good", "items": ["Tak perlu ditelan", "Pakai bila perlu", "Guna semula 3-5 kali"]}
+      ],
+      "product_image": "assets/drmitring-box-cutout.png",
+      "price_ref": "Alpha Starter (2 ring)",
+      "cta": "Beli di drmitring.com"
+    },
+    {
+      "name": "DMR-S02-PS",
+      "template": "problem-solution",
+      "inspired_by": [969],
+      "problem": "Tak yakin bila bersama isteri?",
+      "solution": "Cuba Dr. MIT Ring",
+      "points": ["Bukan ubat, tak perlu ditelan", "2 ring setiap kotak", "Guna semula 3-5 kali"],
+      "product_image": "assets/drmitring-box-cutout.png",
+      "price_ref": "Power Duo (4 ring)",
+      "cta": "Dapatkan di drmitring.com"
+    },
+    {
+      "name": "DMR-S03-DOC",
+      "template": "doctor-id",
+      "inspired_by": [741, 1136],
+      "market": "sj-t20-en",
+      "quote": "Ring ini bukan ubat. Ia alat yang dipakai bila perlu.",
+      "doctor": "Dr Amir",
+      "title": "Doktor lantikan SuamiSihat",
+      "photo": "assets/doctor.png",
+      "cta": "Ketahui lanjut di drmitring.com"
+    }
+  ]
+}

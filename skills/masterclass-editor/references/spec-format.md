@@ -28,38 +28,41 @@ Used to plan and render a **5-episode Masterclass series** (`EP01`–`EP05`) plu
   "trailer": {
     "id": "EP00_Trailer",
     "title": "Trailer Siri Masterclass: 5 Topik Utama Kesihatan Lelaki",
-    "cold_open": {
-      "episode_id": "EP01",
-      "segment": [1.20, 4.50],
-      "headline": "*Mitos* atau *fakta:* masih ada morning wood, masalah tak serius?"
+    "order": "arc",
+    "versions": ["A_story", "B_style"],
+    "linebank": "work/trailer_linebank.json",
+    "audio_map": "work/trailer_audio_map.json",
+    "music": {
+      "src": "//Ssnas/drm/SS-DTC/library/music/<licensed_cue>.wav",
+      "license": "<library + licence id>",
+      "duck_db": -20,
+      "turn_at": 20.0,
+      "hard_stop": "last_spoken_word",
+      "nomusic_version": true
     },
-    "episode_clips": [
-      {
-        "episode_id": "EP01",
-        "badge": "EPISOD 01 · Mitos vs Fakta Ereksi Pagi",
-        "segment": [8.10, 14.60]
-      },
-      {
-        "episode_id": "EP02",
-        "badge": "EPISOD 02 · Punca Fizikal vs Psikologi",
-        "segment": [5.40, 11.80]
-      },
-      {
-        "episode_id": "EP03",
-        "badge": "EPISOD 03 · Aliran Darah, Saraf & Metabolik",
-        "segment": [10.00, 16.50]
-      },
-      {
-        "episode_id": "EP04",
-        "badge": "EPISOD 04 · Bahaya Ubat Tidak Berdaftar",
-        "segment": [3.20, 9.80]
-      },
-      {
-        "episode_id": "EP05",
-        "badge": "EPISOD 05 · Langkah Pemeriksaan & Gaya Hidup",
-        "segment": [6.00, 12.40]
-      }
+    "signature_card": {
+      "line": "DR RAK MENGAJAR KESIHATAN LELAKI",
+      "kicker": "SUAMISIHAT MASTERCLASS · 5 EPISOD",
+      "dur": 3.0
+    },
+    "lines": [
+      {"act": "I",   "episode_id": "EP01", "segment": [1.20, 4.50],  "tag": "myth",     "headline": "*Mitos* atau *fakta:* masih ada morning wood, masalah tak serius?"},
+      {"act": "I",   "episode_id": "EP04", "segment": [3.20, 9.80],  "tag": "stakes",   "badge": "EPISOD 04 · Bahaya Ubat Tidak Berdaftar"},
+      {"act": "II",  "episode_id": "EP01", "segment": [0.00, 0.00],  "tag": "promise",  "note": "only if the doctor recorded a promise line; else omit"},
+      {"act": "II",  "episode_id": "EP02", "segment": [5.40, 11.80], "tag": "question", "badge": "EPISOD 02 · Punca Fizikal vs Psikologi"},
+      {"act": "III", "episode_id": "EP03", "segment": [10.00, 13.10], "tag": "quote",   "badge": "EPISOD 03 · Aliran Darah, Saraf & Metabolik"},
+      {"act": "III", "episode_id": "EP05", "segment": [6.00, 8.90],  "tag": "quote",    "badge": "EPISOD 05 · Langkah Pemeriksaan & Gaya Hidup"}
     ],
+    "moments": [
+      {"after_line": 0, "dur": 1.0, "kind": "broll_slowmo", "src": "visualbank:hands_notes_01"},
+      {"after_line": 1, "dur": 0.8, "kind": "punch_in_listen"}
+    ],
+    "sign_off": {"episode_id": null, "segment": null, "note": "doctor's recorded sign-off only"},
+    "teaser_9x16": {
+      "id": "EP00_Teaser",
+      "lines": [0, 4, 5],
+      "target_s": [25, 40]
+    },
     "curriculum_card": {
       "title": "5 EPISOD DALAM SIRI INI",
       "hold_s": 4.5,
@@ -181,10 +184,11 @@ Used to plan and render a **5-episode Masterclass series** (`EP01`–`EP05`) plu
 ```
 
 ## Pre-render & QA checklist
-1. **Trailer completeness gate**: Confirm `trailer.episode_clips` has one highlight segment for **every episode** in `episodes` (`EP01` through `EP05`), and that each segment uses that episode's own source clip and audio.
-2. **Brand & policy gate**: Extract all text from `series`, `trailer` (`cold_open`, `episode_clips[*].badge`, `curriculum_card.bullets`), `episodes[*]` (`title`, `chapters[*].title`, `hook_9x16.headline`, `callouts[*].points`, `episode_takeaways.bullets`), and transcripts into `batches/<batch>/work/texts.txt`, then run:
+1. **Trailer completeness gate**: Confirm `trailer.lines` uses **every episode** in `episodes` (`EP01` through `EP05`) at least once, each line uses that episode's own source clip and audio, no `promise`/`sign_off` entry has a placeholder segment, and `music.license` is filled (or `music` is removed for a no-music trailer).
+2. **Trailer meaning gate**: Read every `trailer.lines[*]` segment as cut. Each must be a complete thought, keep its qualifiers, not imply a result or clinic service, and not speak an episode's key answer (`references/trailer-craft.md` §6).
+3. **Brand & policy gate**: Extract all text from `series`, `trailer` (`signature_card`, `lines[*].headline`, `lines[*].badge`, `curriculum_card.bullets`), `episodes[*]` (`title`, `chapters[*].title`, `hook_9x16.headline`, `callouts[*].points`, `episode_takeaways.bullets`), and transcripts into `batches/<batch>/work/texts.txt`, then run:
    `python scripts/check_brand.py --brand <slug> --texts batches/<batch>/work/texts.txt --doctor "Dr Rak"`
-3. **Post-render QA**: Verify every 16:9 and 9:16 output file (Trailer + all 5 Episodes + 9:16 Cutdowns):
+4. **Post-render QA**: Verify every 16:9 and 9:16 output file (Trailer + Teaser + all 5 Episodes + 9:16 Cutdowns):
    - `python scripts/check_sync.py <rendered.mp4> <raw.mp4> --max-offset 0.04`
    - `python scripts/check_layout.py batches/<batch>/renders/9x16/<name>.timeline.json` (for 9:16 Trailer and 9:16 cutdowns)
    - `ffprobe` resolution check (`1920,1080` for 16:9; `1080,1920` for 9:16).

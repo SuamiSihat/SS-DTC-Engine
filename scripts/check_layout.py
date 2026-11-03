@@ -2,7 +2,7 @@
 """Layout QA for a rendered ad: safe area, doctor's face, 1080x1920 output (see skills/dtc-broll).
 
 Usage: python scripts/check_layout.py batches/<batch>/renders/<name>.timeline.json [more.timeline.json ...] [--facetrack work/facetrack_001.json]
-Reads the layout recorded by render_batch.py and the face track from scripts/face_track.py.
+Reads the layout recorded by render_batch.py / render_masterclass.py and the face track from scripts/face_track.py.
 Checks every overlay and the caption band every 0.25 s: inside the safe area, not on the face box.
 Face box = the tracked face centre, about 400 px wide, 240 px above and 200 px below at wide framing (scaled for tight and card framing).
 Exit code 1 if any file fails. Only reports what it checked; it does not replace watching the video.
@@ -38,6 +38,21 @@ def inter(a, b):
     return min(a[2], b[2]) > max(a[0], b[0]) and min(a[3], b[3]) > max(a[1], b[1])
 
 
+def find_work_dir(tlp):
+    for p in (tlp.parent.parent / "work", tlp.parent.parent.parent / "work"):
+        if p.is_dir():
+            return p
+    return tlp.parent.parent / "work"
+
+
+def load_ft_for_src(work_dir, src):
+    m = re.search(r"(\d+)$", pathlib.Path(src).stem)
+    if not m:
+        return None
+    cand = work_dir / f"facetrack_{m.group(1)}.json"
+    return json.loads(cand.read_text(encoding="utf-8")) if cand.exists() else None
+
+
 def main():
     args = sys.argv[1:]
     ftpath = None
@@ -49,11 +64,12 @@ def main():
     for tl in args:
         tlp = pathlib.Path(tl); d = json.loads(tlp.read_text(encoding="utf-8"))
         lay = d.get("layout")
+        target_w, target_h = d.get("size", [W, H])
         issues = []
         mp4 = tlp.with_name(d["file"])
         if mp4.exists():
             r = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height", "-of", "csv=p=0", str(mp4)], capture_output=True, text=True).stdout.strip()
-            if r != f"{W},{H}": issues.append(f"output size {r}, must be {W},{H}")
+            if r != f"{target_w},{target_h}": issues.append(f"output size {r}, must be {target_w},{target_h}")
         else:
             issues.append("mp4 not found, size not checked")
         if not lay:
@@ -66,29 +82,31 @@ def main():
             for name, r, a, b in rects:
                 if r[0] < sx0 or r[2] > sx1 or r[1] < sy0 or r[3] > sy1:
                     issues.append(f"{name}: outside the safe area {tuple(round(v) for v in r)}")
-            items = [i for i in d["items"] if i.get("mode")]
-            ft = None
-            if ftpath is None and items:
-                m = re.search(r"(\d+)$", pathlib.Path(items[0]["src"]).stem)
-                cand = tlp.parent.parent / "work" / f"facetrack_{m.group(1)}.json" if m else None
-                if cand and cand.exists(): ft = json.loads(cand.read_text(encoding="utf-8"))
-            elif ftpath:
-                ft = json.loads(ftpath.read_text(encoding="utf-8"))
-            if ft is None:
+            items = [i for i in d["items"] if i.get("mode") and i.get("src")]
+            work_dir = find_work_dir(tlp)
+            ft_cache = {}
+            default_ft = json.loads(ftpath.read_text(encoding="utf-8")) if ftpath and ftpath.exists() else None
+            for it in items:
+                s = it["src"]
+                if s not in ft_cache:
+                    ft_cache[s] = default_ft or load_ft_for_src(work_dir, s)
+            if items and not any(ft_cache.values()):
                 issues.append("no face track found, face overlap NOT checked (run scripts/face_track.py)")
-            else:
+            elif target_w == W and target_h == H:
                 hits = {}
                 t = 0.0
                 while t < d["total"]:
                     it = next((i for i in items if i["out_start"] <= t < i["out_start"] + i["dur"]), None)
-                    if it:
-                        fx, fy = face_at(ft, it["src_start"] + (t - it["out_start"]))
-                        fb = face_box(it["mode"], fx, fy, lay.get("card", [108, 480, 864, 860]))
-                        for name, r, a, b in rects:
-                            if a <= t <= b and not (name == "captions" and any(h0 <= t <= h1 for h0, h1 in lay.get("captions_hidden", []))):
-                                if inter(r, fb):
-                                    k = re.sub(r"_\d+\.png$", ".png", name)
-                                    hits.setdefault(k, []).append(t)
+                    if it and it.get("mode") != "broll":
+                        ft = ft_cache.get(it["src"])
+                        if ft:
+                            fx, fy = face_at(ft, it["src_start"] + (t - it["out_start"]))
+                            fb = face_box(it["mode"], fx, fy, lay.get("card", [108, 480, 864, 860]))
+                            for name, r, a, b in rects:
+                                if a <= t <= b and not (name == "captions" and any(h0 <= t <= h1 for h0, h1 in lay.get("captions_hidden", []))):
+                                    if inter(r, fb):
+                                        k = re.sub(r"_\d+\.png$", ".png", name)
+                                        hits.setdefault(k, []).append(t)
                     t += 0.25
                 for k, ts in hits.items():
                     issues.append(f"{k}: covers the face at {ts[0]:.2f}-{ts[-1]:.2f} s ({len(ts)} samples)")

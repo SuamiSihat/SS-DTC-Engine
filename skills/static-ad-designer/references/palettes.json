@@ -1,0 +1,38 @@
+{
+  "_note": "Colour ROLES for static ads, mapped to colour KEYS in brands/<slug>/brand.json (hex values are always read from brand.json, never typed here). Logo = file name under brands/<slug>/design-system/logos/ (synced by scripts/sync_brand_assets.py) for use on the dark background. Contrast pairs follow each brand's color_rules.",
+  "drmitring": {
+    "bg": "neutral_black", "text": "canvas", "accent": "dr_mit_lime", "on_accent": "neutral_black",
+    "card": "canvas", "on_card": "neutral_black", "chip": "yellow", "on_chip": "neutral_black",
+    "logo": "logo_drmitring.svg",
+    "signoff": "Dr. MIT Ring\u00ae \u2014 Direka oleh SuamiSihat",
+    "rules_note": "Lime text on black OK; never white on lime; yellow only as a chip on black."
+  },
+  "menss": {
+    "bg": "carbon_obsidian", "text": "pure_white", "accent": "precision_cyan", "on_accent": "carbon_obsidian",
+    "card": "pure_white", "on_card": "carbon_obsidian", "chip": "precision_cyan", "on_chip": "carbon_obsidian",
+    "logo": "logo_menss.svg",
+    "signoff": "MENSS",
+    "rules_note": "Cyan with white text only at large sizes; body text on cyan uses Carbon Obsidian."
+  },
+  "rejal": {
+    "bg": "rejal_black", "text": "white", "accent": "heritage_gold", "on_accent": "rejal_black",
+    "card": "rejal_black_raised", "on_card": "white", "chip": "heritage_gold", "on_chip": "rejal_black",
+    "logo": "rejal-wordmark-white.svg",
+    "signoff": "REJAL",
+    "rules_note": "No green. Food, never medicine."
+  },
+  "ssclinic": {
+    "bg": "deep_prussian_navy", "text": "pure_white", "accent": "warm_clinic_gold", "on_accent": "deep_prussian_navy",
+    "card": "pure_white", "on_card": "deep_prussian_navy", "chip": "azure_energy", "on_chip": "deep_prussian_navy",
+    "logo": "logo_ssc_primary_light.png",
+    "signoff": "",
+    "rules_note": "Educational mode: no CTA, price, offer or testimonial. KOL mode: no doctor, KKLIU number required."
+  },
+  "mensculine": {
+    "bg": "obsidian_black", "text": "white", "accent": "vivid_blue", "on_accent": "obsidian_black",
+    "card": "light_surface", "on_card": "obsidian_black", "chip": "vivid_blue", "on_chip": "obsidian_black",
+    "logo": "logo_mensculine_primary_light.svg",
+    "signoff": "Mensculine",
+    "rules_note": "English-first, no slang."
+  }
+}

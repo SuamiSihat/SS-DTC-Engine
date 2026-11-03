@@ -1,4 +1,4 @@
-# Footage and outputs live on the NAS, never in git
+﻿# Footage and outputs live on the NAS, never in git
 batches/*/raw/
 batches/*/work/
 batches/*/renders/
@@ -31,3 +31,10 @@ brands/_staff/
 
 # Downloaded models (scripts/stock_fetch.py fetch-model)
 models/
+
+# Swipe library (local test copies; the real one lives on the NAS via SWIPE_LIBRARY)
+/swipe-library/
+# Rasterised logo cache (scripts/render_static.py)
+batches/_cache/
+# Test batch for static renders
+batches/static-test/assets/
