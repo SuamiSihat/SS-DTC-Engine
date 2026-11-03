@@ -17,7 +17,8 @@ Colour roles per brand: `references/palettes.json` (maps roles to brand.json col
    - 2-4 variants per idea (different headline or template), so Meta has something to test.
 4. Run `python scripts/render_static.py batches/<batch>/static_spec.json`. The gate runs first:
    engine rules (below) + `check_brand.py` on every line. A BLOCK stops the run. Never reword a claim to get past a block; choose a different line.
-5. Open `renders/static/review_sheet.jpg` and every PNG at full size. Check: nothing clipped, text readable on a phone,
+5. Open `renders/static/review_sheet.jpg`. Open a PNG at full size only where the sheet shows a possible problem, or for the
+   first render of a new template (token budget, CLAUDE.md). Check: nothing clipped, text readable on a phone,
    logo intact, price matches the live site, nothing inside the story top 250 px / bottom 340 px except background.
 6. Hand over the PNGs, `static_index.csv` and `review_notes.md` (REVIEW items for the human).
 
