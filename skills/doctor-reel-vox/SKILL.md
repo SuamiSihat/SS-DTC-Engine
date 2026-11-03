@@ -54,9 +54,15 @@ rules conflict, the engine and `brands/ssclinic/brand.json` win (decision: Head 
 - 3D medical renders (artery, neurons, hormone molecule) are allowed only where the brief lists them. They must be non-explicit and carry no claim.
 - Stock: free clips only, 1080p or 720p, licence record kept by `stock_fetch.py`.
 
+## Decision log
+- 2026-11-03 (Head of Creative): keep the DRA Chp 4 hook lines as spoken: "MORNING ERECTION" / "ERECTION" (clip 6),
+  "CEPAT LEMBIK?" (clip 9), and the clip 8 hook sticker. These pass the brand gate (0 BLOCK; "cepat" is a REVIEW term,
+  now decided). New clips still get every BLOCK/REVIEW line sent for a decision.
+- 2026-11-03: Dr Rak consent confirmed; claims signed off by SS Clinic per batch before posting (brands/ssclinic/brand.json).
+
 ## Human decisions (do not decide alone)
 - Any spoken or on-screen line flagged BLOCK or REVIEW above (clinic CTA, "mati pucuk", treatment names, "cepat").
-- Doctor consent: `doctor_consent_ref` is still null for SS Clinic and claims status is TBC. Until both are on file, every output is **internal review only**, not for posting.
+- SS Clinic sign-off of each batch before posting (consent for Dr Rak is on file; the gate blocks any doctor without one).
 - Whether AI overlays and 3D medical renders are approved for the batch.
 - Turning the doctor grade on.
 - Sign-off before launch.
@@ -72,7 +78,8 @@ rules conflict, the engine and `brands/ssclinic/brand.json` win (decision: Head 
 - End-card logo comes from `brand.json` `logo_files.on_dark_background`, found under `DESIGN_SYSTEM_ROOT`. The wordmark is never retyped.
 
 ## Known gaps
-- The renderer has only been run on a synthetic smoke clip. It has NOT been matched against the approved DRA Chp 4 renders,
-  because those raws are not on this PC or the NAS. Do the clip 9 side-by-side before trusting the look.
+- The renderer has only been run on a synthetic smoke clip. The DRA Chp 4 raws and approved renders are not available
+  (confirmed 2026-11-03), so there is no side-by-side reference. The first real Dr Rak clip is the look check:
+  render ONE clip, send the frame grid and hook-caption crop, and wait for the Head of Creative's OK before the rest.
 - CapCut project export (original template section 4) is not ported yet. Add it only after the renderer works.
 - The cloud session branch `batch/dra-chp4-01` never reached GitHub (403), so the original render code is not recoverable. Rebuild from the spec.
