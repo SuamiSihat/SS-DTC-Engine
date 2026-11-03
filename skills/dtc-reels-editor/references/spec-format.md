@@ -15,14 +15,16 @@
    "headline": "*Mitos* atau *fakta?* ...",        // *gold* keywords
    "broll": [{"kind": "quote", "src": [s, e], "text": "<verbatim real review>", "by": "Pelanggan, WhatsApp"}],  // optional, see skills/dtc-broll
    "hooks": {"B": {"segment": [s, e], "headline": "..."}, "C": {"headline": "..."}},
-   "variants": [                                 // PLANNED, not read by render_batch.py yet (see SKILL.md, Variant mode)
-     {"id": "TOFU-B-energy", "funnel": "TOFU", "hook": "B", "style": "energy"},
-     {"id": "MOFU-A-story",  "funnel": "MOFU", "hook": "A", "style": "story"}
+   "variants": [                                 // read with --variants (see SKILL.md, Variant mode; gate in scripts/variants.py)
+     {"id": "TOFU-B-story", "funnel": "TOFU", "hook": "B", "style": "story", "product": "care_cream",
+      "segments": [[s, e], ...]},               // optional: this variant's source ranges (default: the clip's segments)
+     {"id": "BOFU-C-clean", "funnel": "BOFU", "hook": "C", "style": "clean", "product": "care_cream",
+      "price_ref": "Menss Care Cream - Sologrip (1 Unit)"}   // BOFU: product name from prices.json, never a typed price
    ]
  }]
 }
 ```
-Run: `python scripts/render_batch.py batches/<batch>/work/spec.json [--only 001] [--versions ABC]`
+Run: `python scripts/render_batch.py batches/<batch>/work/spec.json [--only 001] [--versions ABC]`, or `--variants [--check]` for variant mode
 Versions: A master, B cold open (best line first), C topic visual (first segment in a navy panel layout).
 Then `python scripts/check_sync.py --timeline batches/<batch>/renders/<name>.timeline.json` for every file.
 

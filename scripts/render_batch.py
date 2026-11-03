@@ -2,6 +2,7 @@
 """Render ad versions (A master, B cold open, C topic visual) from a batch spec.
 
 Usage: python scripts/render_batch.py batches/<batch>/spec.json [--only 001] [--versions ABC] [--preview 20]
+       python scripts/render_batch.py batches/<batch>/spec.json --variants [--check]   (funnel x hook x style, scripts/variants.py)
 Spec: see skills/dtc-reels-editor/references/spec-format.md
 Needs ffmpeg on PATH, Pillow. Fonts: Poppins installed system-wide. Writes renders/<name>.mp4 and
 renders/<name>.timeline.json (used by check_sync.py --timeline).
@@ -12,6 +13,7 @@ from PIL import Image, ImageDraw, ImageFont
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import look_filter
+import variants
 import broll
 LOOK = None  # set in main() from spec["look"]; None = no film look (default)
 W, H = 1080, 1920
@@ -113,10 +115,20 @@ def make_endcard(path, logo_png, line, cta):
     lw = 800; lh = int(logo.height * lw / logo.width)
     logo = logo.resize((lw, lh), Image.LANCZOS)
     img.paste(logo, ((W - lw) // 2, 640), logo)
-    f1, f2 = font("Poppins-Bold.ttf", 88), font("Poppins-Medium.ttf", 48)
-    for txt, f, y, col in ((line, f1, 930, GOLD), (cta, f2, 1090, WHITE)):
-        tw = d.textlength(txt, font=f)
-        d.text(((W - tw) / 2, y), txt, font=f, fill=col)
+    y = 930
+    for txt, name, size, col in ((line, "Poppins-Bold.ttf", 88, GOLD), (cta, "Poppins-Medium.ttf", 48, WHITE)):
+        if not txt: continue
+        f = font(name, size)
+        while size > 34 and d.textlength(txt, font=f) > SAFE_R - SAFE_L:  # shrink to the safe width first
+            size -= 2; f = font(name, size)
+        rows, cur = [], ""
+        for w_ in txt.split():  # then wrap if still too wide
+            if cur and d.textlength(cur + " " + w_, font=f) > SAFE_R - SAFE_L: rows.append(cur); cur = w_
+            else: cur = (cur + " " + w_).strip()
+        rows.append(cur)
+        for r_ in rows:
+            d.text(((W - d.textlength(r_, font=f)) / 2, y), r_, font=f, fill=col); y += int(size * 1.25)
+        y += 40
     img.save(path)
 
 # ---------- words and captions ----------
@@ -287,6 +299,8 @@ def render(name, items, overlays, ass_words, fixes, out_dir, work, fps, preview=
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("spec"); ap.add_argument("--only"); ap.add_argument("--versions", default="ABC"); ap.add_argument("--preview", type=float)
+    ap.add_argument("--variants", action="store_true", help="render each clip's variants list instead of A/B/C")
+    ap.add_argument("--check", action="store_true", help="with --variants: run the variant gate only, render nothing")
     a = ap.parse_args()
     spec = json.load(open(a.spec, encoding="utf-8"))
     batch = pathlib.Path(a.spec).resolve().parent.parent if pathlib.Path(a.spec).parent.name == "work" else pathlib.Path(a.spec).resolve().parent
@@ -307,20 +321,19 @@ def main():
         fixes = {k.lower(): v for k, v in clip.get("fixes", {}).items()}
         segs = [snap(words, s, e) for s, e in clip["segments"]]
         n = clip["n"]
-        def mk_items(first_mode_split=False, opener=None):
+        def mk_items(first_mode_split=False, opener=None, body=None, endcard=None):
             items = []; ass = []; t = 0.0; modes = ["wide", "tight"]
-            seq = ([("opener", opener)] if opener else []) + [("seg", s) for s in segs]
+            body = body or [(s_, e_, modes[k % 2]) for k, (s_, e_) in enumerate(segs)]
+            seq = ([("opener", (opener[0], opener[1], "tight"))] if opener else []) + [("seg", b) for b in body]
             for k, (kind, sg) in enumerate(seq):
-                s, e = sg
-                if kind == "opener": mode = "tight"
-                elif first_mode_split and k == 0: mode = "split"
-                else: mode = modes[(k - (1 if opener else 0)) % 2]
+                s, e, mode = sg
+                if kind == "seg" and first_mode_split and k == 0: mode = "split"
                 e = s + max(1, round((e - s) * fps)) / fps
                 items.append({"type": "clip", "src": clip["src"], "s": s, "e": e, "mode": mode})
                 for w in words_between(words, s, e):
                     ass.append({"w": w["w"], "s": t + (w["s"] - s), "e": t + (w["e"] - s)})
                 t += e - s
-            items.append({"type": "end", "png": str(work / "endcard.png"), "dur": ec.get("dur", 2.8)})
+            items.append({"type": "end", "png": str(endcard or (work / "endcard.png")), "dur": ec.get("dur", 2.8)})
             return items, ass, t
         name_base = f"{spec['prefix']}{n}"
         versions = {}
@@ -346,10 +359,50 @@ def main():
             ovs = [{"png": str(hl), "x": OVL_X, "y": HEAD_Y_TOP, "start": 0.1, "end": max(1.5, od - 0.1)},
                    {"png": str(work / "lowerthird.png"), "x": OVL_X, "y": HEAD_Y_TOP, "start": od + 0.4, "end": od + 4.4}]
             versions["C_Hook-TopicVisual"] = (items, ovs, ass)
+        if a.variants:
+            ok, blocks = variants.check_plan(spec, clip, snap, words)
+            for b in blocks: print(b, flush=True)
+            if not clip.get("variants"):
+                print(f"clip {clip['id']}: no variants listed", flush=True)
+            if blocks and not ok:
+                continue
+            versions = {} if not a.check else None; vhook = {}
+            for v in (ok if not a.check else []):
+                line, cta = variants.close_text(spec, v)
+                if v["funnel"] == "BOFU":
+                    pj = json.loads((ROOT / "brands" / brand / "prices.json").read_text(encoding="utf-8"))
+                    pr = next(x for x in pj["products"] if x["name"] == v["price_ref"])
+                    line = v.get("end_line") or pr["name"]; cta = f"RM{pr['price_rm']:.2f}" + (f" | {cta}" if cta else "")
+                ecp = work / f"endcard_{clip['id']}_{v['id']}.png"
+                make_endcard(ecp, logo, line, cta)
+                body = variants.style_modes(v.get("style", "clean"), v["segments"], words_between, words)
+                h = v["hook"]
+                if h == "B":
+                    hk = clip["hooks"]["B"]; op = snap(words, *hk["segment"])
+                    items, ass, _ = mk_items(opener=op, body=body, endcard=ecp); od = op[1] - op[0]
+                    hl = work / f"hl_{clip['id']}_{v['id']}.png"; make_headline(hl, hk["headline"])
+                    ovs = [{"png": str(hl), "x": OVL_X, "y": HEAD_Y_TOP, "start": 0.1, "end": max(1.5, od - 0.1)},
+                           {"png": str(work / "lowerthird.png"), "x": OVL_X, "y": head_y(lth), "start": od + 0.5, "end": od + 4.5}]
+                elif h == "C":
+                    hk = clip["hooks"]["C"]
+                    items, ass, _ = mk_items(first_mode_split=True, body=body, endcard=ecp); od = items[0]["e"] - items[0]["s"]
+                    hl = work / f"hl_{clip['id']}_{v['id']}.png"; make_headline(hl, hk["headline"], size=72)
+                    ovs = [{"png": str(hl), "x": OVL_X, "y": HEAD_Y_TOP, "start": 0.1, "end": max(1.5, od - 0.1)},
+                           {"png": str(work / "lowerthird.png"), "x": OVL_X, "y": HEAD_Y_TOP, "start": od + 0.4, "end": od + 4.4}]
+                else:  # A
+                    items, ass, _ = mk_items(body=body, endcard=ecp)
+                    hl = work / f"hl_{clip['id']}_{v['id']}.png"; hw, hh = make_headline(hl, clip["headline"])
+                    ovs = [{"png": str(hl), "x": OVL_X, "y": head_y(hh), "start": 0.2, "end": 3.4},
+                           {"png": str(work / "lowerthird.png"), "x": OVL_X, "y": head_y(lth), "start": 3.8, "end": 7.8}]
+                versions[f"V_{v['id']}"] = (items, ovs, ass); vhook[f"V_{v['id']}"] = h
+            if versions is None:
+                print(f"clip {clip['id']}: {len(ok)} variant(s) pass the gate", flush=True)
+                continue
         for vname, (items, ovs, ass) in versions.items():
             name = f"{name_base}_{vname}"
             print("render", name, flush=True)
-            ass = broll.apply_quotes(types.SimpleNamespace(**globals()), clip, words, items, ovs, ass, work, vname[0])
+            ass = broll.apply_quotes(types.SimpleNamespace(**globals()), clip, words, items, ovs, ass, work,
+                                     vhook.get(vname, vname[0]) if a.variants else vname[0])
             out, total = render(name, items, ovs, ass, fixes, out_dir, work, fps, a.preview)
             print(f"  -> {out.name} {total:.1f}s", flush=True)
 
