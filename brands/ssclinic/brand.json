@@ -82,13 +82,13 @@
     "datang ke ss clinic",
     "ss clinic boleh bantu"
   ],
-  "claims_status": "TBC - no claims guidance supplied",
-  "doctor_consent_ref": null,
+  "claims_status": "Sign-off by SS Clinic (brand owner) for each batch before posting. Recorded by Head of Creative, 2026-11-03.",
+  "doctor_consent_ref": "Dr Rak: consent given, confirmed by Head of Creative (Muhammad Harussani) 2026-11-03. File the written note with SS Clinic.",
   "doctor_allowed_in_ads": "yes, in Educational mode only: real SS Clinic doctor, organic educational posts, identified with a lower third (name and title), no clinic CTA. Never in clinic advertisements (KOL ad mode). Head of Creative decisions 2026-10-16 and 2026-10-21.",
   "slug": "ssclinic",
   "source": "SuamiSihat Design System repo (static/products/<slug>/metadata.json, docs/claims-review/README.md and audit-2026-10-13.md), brand guideline v1.0 PDFs (16 Oct 2026), and live site https://suamisihat.clinic/",
   "gate": {
-    "enforce_doctor_consent": false,
+    "enforce_doctor_consent": true,
     "block_on_banned_terms": true,
     "require_appointed_doctor": true
   },
@@ -109,7 +109,7 @@
       "decided_by": "Head of Creative (Muhammad Harussani Adul Manap)",
       "decision": "Allow doctor on screen for SS Clinic educational videos, with a lower third \"Dr Rak, Men's Health Doctor\". Only doctors from SS Clinic may appear. Dr Rak is head of doctors at SuamiSihat Healthcare Sdn Bhd.",
       "unchanged": "banned_terms, review_terms and the claims review (TBC) still apply. End card line: 'Kami Check & Rawat'.",
-      "open": "Guideline v1.0 still says do not show or name individual doctors; update it so it matches. Doctor consent reference not on file."
+      "open": "Guideline v1.0 still says do not show or name individual doctors; update it so it matches. Doctor consent for Dr Rak confirmed 2026-11-03."
     },
     {
       "date": "2026-10-16",
@@ -131,7 +131,7 @@
       "unchanged": "Still no clinic CTA, offer, testimonial or proof in Educational mode."
     }
   ],
-  "standing_notice": "SS Clinic decision log 2026-10-21: Educational mode (default) = real doctor, no clinic CTA, no offer or testimonial. KOL ad mode = KOL only, KKLIU number per posting. Claims guidance is still TBC.",
+  "standing_notice": "SS Clinic decision log 2026-10-21: Educational mode (default) = real doctor, no clinic CTA, no offer or testimonial. KOL ad mode = KOL only, KKLIU number per posting. Dr Rak consent confirmed and claims signed off by SS Clinic per batch (2026-11-03).",
   "end_card_line": "Educational mode: neutral close only (no clinic CTA). KOL ad mode: wording as approved in the KKLIU application. 'Kami Check & Rawat' retired for doctor videos 2026-10-21.",
   "logo_files": {
     "on_light_background": "design-system/logos/logo_ssc_primary_light.svg (navy and light blue)",
