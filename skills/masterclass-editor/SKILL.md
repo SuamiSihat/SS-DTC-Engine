@@ -1,22 +1,23 @@
 ---
 name: masterclass-editor
-description: Turn raw doctor or presenter lecture footage into a 5-episode Masterclass educational series + mandatory Series Trailer (containing a highlight clip from every episode), rendered in both 16:9 (1920x1080 full episodes + trailer for course portals / YouTube) and 9:16 (1080x1920 vertical trailer + chapter/episode cutdowns for Reels / TikTok / Shorts), complete with episode/chapter title cards, slide/diagram callouts, and numbered key-takeaway summary cards. Use when the user asks to edit a masterclass, course module, long-form tutorial, or educational lecture series.
+description: Turn raw doctor or presenter lecture footage into a 5-episode Masterclass educational series + mandatory 3-act Series Trailer (16:9) and Teaser (9:16) cut audio-first from real lines across every episode, rendered in both 16:9 (1920x1080 full episodes + trailer for course portals / YouTube) and 9:16 (1080x1920 teaser + chapter/episode cutdowns for Reels / TikTok / Shorts), complete with episode/chapter title cards, slide/diagram callouts, and numbered key-takeaway summary cards. Use when the user asks to edit a masterclass, course module, long-form tutorial, educational lecture series, or a trailer/teaser for one.
 ---
 
 # Masterclass Editor (5-Episode Series + Mandatory Trailer in 16:9 & 9:16)
 
-Turn raw talking-head lecture footage into a structured Masterclass series (typically **5 episodes**, `EP01`–`EP05`) plus a **mandatory Masterclass Trailer** that features a highlight clip from every episode.
+Turn raw talking-head lecture footage into a structured Masterclass series (typically **5 episodes**, `EP01`–`EP05`) plus a **mandatory Masterclass Trailer** (16:9) and **Teaser** (9:16) cut as a 3-act mini-movie from real lines across every episode.
 Read the batch brief in `briefs/<batch>.md` first; it names ONE brand slug (load `brand-rules`, default `ssclinic` Educational mode for doctor lectures). Work locally under `batches/<batch>/` (`raw/`, `work/`, `renders/16x9/`, `renders/9x16/`, `qa/`, `deliver/`). Footage and renders stay out of git.
 
 ## Series Structure (Default: 5 Episodes + 1 Mandatory Trailer)
 
 A standard Masterclass has **5 episodes** (`EP01` to `EP05`) and **1 Series Trailer** (`EP00_Trailer`):
-1. **Masterclass Trailer (MANDATORY, 16:9 + 9:16, `35–60 s`)**:
-   - **Rule**: Every Masterclass batch MUST include a trailer containing **at least one highlight clip (`4–8 s`) from each of the 5 episodes** (`EP01` through `EP05`). Never deliver a Masterclass batch without its trailer, and never omit an episode from the trailer.
+1. **Masterclass Trailer (MANDATORY, 16:9 `60–90 s`) + 9:16 Teaser (`25–40 s`)**:
+   - **Rule**: Every Masterclass batch MUST include a trailer containing **at least one real spoken line from each of the 5 episodes** (`EP01` through `EP05`). Never deliver a Masterclass batch without its trailer, and never omit an episode from it.
+   - The trailer is cut as a 3-act mini-movie in **arc order**, not episode order. Read `references/trailer-craft.md` before planning any trailer.
 2. **5 Full Episodes (`EP01`–`EP05`, 16:9 `1920x1080`, `2–12 min` each)**:
    - Each episode is divided into numbered chapters (`Bab 01`, `Bab 02`, ...), supported by side-by-side slide/diagram callouts and closing with a **Numbered Key-Takeaway Summary Card** (`Ringkasan Episod`).
 3. **Vertical Cutdowns (`9:16` `1080x1920`, `30–60 s` each)**:
-   - Includes the **9:16 Masterclass Trailer** plus standalone 9:16 episode/chapter reels (`EP01`–`EP05`).
+   - Includes the **9:16 Masterclass Teaser** (`EP00_Teaser`, its own cut, not a crop of the 16:9 trailer) plus standalone 9:16 episode/chapter reels (`EP01`–`EP05`).
 
 ---
 
@@ -30,10 +31,11 @@ A standard Masterclass has **5 episodes** (`EP01` to `EP05`) and **1 Series Trai
    - Read the brief and inspect every raw episode clip (`EP01`–`EP05`). Generate a contact sheet before planning cuts.
 2. **Transcribe & 5-episode mapping**:
    - Transcribe all episode clips with Whisper (Malay or English per brief, word-level timestamps) into `work/transcripts/`.
-   - Map each of the 5 episodes into sequential **Chapters** (`work/chapters.json`) and select **1 standout highlight line (`4–8 s`) from each episode** (`EP01`–`EP05`) to form the **Masterclass Trailer**.
+   - Map each of the 5 episodes into sequential **Chapters** (`work/chapters.json`).
+   - **Trailer breakdown** (`references/trailer-craft.md` §2): log every usable spoken sentence from all episodes into `work/trailer_linebank.json` (tags, promise, `resolves`, `standalone`) and the usable shots into `work/trailer_visualbank.json`. Select trailer lines from the banks, not by scrubbing episodes.
 3. **Cut (Masterclass pacing + Trailer assembly)**:
    - **Episodes (`EP01`–`EP05`)**: Cut false starts, stumbles, repeated takes, and filler phrases at word boundaries while keeping calm, natural teaching cadence (`0.25–0.40 s` pause between sentences; `0.6–0.8 s` pause at chapter transitions).
-   - **Mandatory Trailer (`EP00_Trailer`)**: Assemble the 5 episode highlight clips (`EP01` → `EP05`), snapping every cut to clean word boundaries. Each clip in the trailer uses its own source episode audio (never master/other-clip audio).
+   - **Mandatory Trailer (`EP00_Trailer`) + Teaser (`EP00_Teaser`)**: Cut **audio first** (`work/trailer_audio_map.json`: music cue, dialogue lines, moments, hard stop), then fill picture. Follow the 3-act arc, the line–moment–line rhythm and the "nothing resolves" rule with the meaning gate (`references/trailer-craft.md` §3–6). Snap every line to clean word boundaries; each line uses its own source episode audio (never master/other-clip audio). Cut two versions (A story-led, B style-led) for review.
 4. **Dual-format framing (`16:9` + `9:16`)**:
    - **16:9 (`1920x1080`, 30 fps — Trailer + 5 Full Episodes)**:
      - Base framing: clean wide shot (eyes near upper-third line `y ≈ 360`).
@@ -49,18 +51,19 @@ A standard Masterclass has **5 episodes** (`EP01` to `EP05`) and **1 Series Trai
    - **9:16 (Trailer + Cutdowns)**: Word-by-word burned captions (max 3 words per group, `70 pt`, key terms in brand accent colour) inside `y <= 1248`, hidden whenever a lower-area card is shown.
 7. **Render**:
    - Build `work/spec_masterclass.json` (see `references/spec-format.md`).
-   - Verify `trailer.clips` contains one entry for **every** episode in `episodes` (`EP01`–`EP05`).
+   - Verify `trailer.lines` covers **every** episode in `episodes` (`EP01`–`EP05`) at least once.
    - Render 16:9 Trailer + 5 Full Episodes to `batches/<batch>/renders/16x9/` (`1920x1080`, `libx264`, `crf 18–20`, `30 fps`).
    - Render 9:16 Trailer + 9:16 Episode/Chapter Cutdowns to `batches/<batch>/renders/9x16/` (`1080x1920`, `libx264`, `crf 20`, `30 fps`).
 8. **QA gate**:
    - Re-run `scripts/check_brand.py` on all final text (trailer cards, episode/chapter titles, takeaway cards, slide labels, captions).
    - Verify the Trailer includes all 5 episodes (`EP01`–`EP05`).
+   - **Trailer craft QA** (`references/trailer-craft.md` §6, §8, §10): every trailer line passes the meaning gate (complete thought, no dropped qualifier, no implied result or clinic service); no episode's key answer is spoken; music stops on the final spoken word; loudness `-14 LUFS` integrated, true peak `<= -1 dBTP`; one sound-off and one eyes-closed review pass logged in `qa/`.
    - Run `scripts/check_sync.py` (`sync-qa`, `--max-offset 0.04`) on every 16:9 and 9:16 render (for the Trailer, check each episode segment against its respective raw episode clip).
    - Run `scripts/check_layout.py` on every 9:16 render and verify `ffprobe` resolution (`1920x1080` for 16:9; `1080x1920` for 9:16).
    - Visually inspect a frame grid at every episode badge, chapter card, diagram callout, and takeaway card transition.
 9. **Package**:
    - Organise into:
-     - `deliver/<batch>/00-Trailer/` (`<PREFIX>_EP00_Trailer_16x9.mp4` + `.srt`/`.vtt` and `<PREFIX>_EP00_Trailer_9x16.mp4`)
+     - `deliver/<batch>/00-Trailer/` (`<PREFIX>_EP00_Trailer_16x9.mp4` + `.srt`/`.vtt`, `<PREFIX>_EP00_Teaser_9x16.mp4`, and a `_nomusic` version of each)
      - `deliver/<batch>/16x9-Episodes/` (`EP01`–`EP05` full 16:9 MP4s + `.srt`/`.vtt` + `chapters.txt`)
      - `deliver/<batch>/9x16-Cutdowns/` (`EP01`–`EP05` 9:16 vertical MP4s)
      - `deliver/<batch>/Masterclass Index.csv`
@@ -70,23 +73,19 @@ A standard Masterclass has **5 episodes** (`EP01` to `EP05`) and **1 Series Trai
 
 ---
 
-## Mandatory Masterclass Trailer Structure (`35–60 s`, 16:9 & 9:16)
+## Mandatory Masterclass Trailer Structure (16:9 `60–90 s` + 9:16 Teaser `25–40 s`)
 
-Every Masterclass series (usually 5 episodes) must have a trailer built from real spoken moments across all 5 episodes:
+Built from real spoken lines across all 5 episodes, cut as a 3-act mini-movie in arc order. Full craft rules, music arc and examples: `references/trailer-craft.md`.
 
-| Beat | Time (approx.) | Visual & Overlay | Audio |
-| --- | --- | --- | --- |
-| **1. Cold-Open Hook** | `0.0–3.5 s` | Strongest single question/statement from the series + Doctor Lower Third (`Dr Rak, Men's Health Doctor`, MMC 6.3) | Clip's own real speech |
-| **2. Series Title Card** | `3.5–6.5 s` | `SUAMISIHAT MASTERCLASS · 5 EPISOD`, Series Title, Presenter Name & Title, Official Brand Logo | Breath pause / subtle transition |
-| **3. Episode 01 Clip** | `6.5–13.5 s` | Highlight clip from **EP01** + on-screen badge `EPISOD 01 · [EP01 Title]` | EP01 source audio |
-| **4. Episode 02 Clip** | `13.5–20.5 s` | Highlight clip from **EP02** + on-screen badge `EPISOD 02 · [EP02 Title]` | EP02 source audio |
-| **5. Episode 03 Clip** | `20.5–27.5 s` | Highlight clip from **EP03** + on-screen badge `EPISOD 03 · [EP03 Title]` | EP03 source audio |
-| **6. Episode 04 Clip** | `27.5–34.5 s` | Highlight clip from **EP04** + on-screen badge `EPISOD 04 · [EP04 Title]` | EP04 source audio |
-| **7. Episode 05 Clip** | `34.5–41.5 s` | Highlight clip from **EP05** + on-screen badge `EPISOD 05 · [EP05 Title]` | EP05 source audio |
-| **8. 5-Episode Curriculum Card** | `41.5–46.0 s` | Numbered summary card (`01`–`05`) listing all 5 episode titles (`5 Topik Utama Dalam Siri Ini`) | Final spoken wrap-up or hold |
-| **9. Neutral End Card** | `46.0–49.0 s` | Brand logo + neutral educational close (`Jumpa doktor untuk pemeriksaan jika ada simptom`) | Clean tail |
+| Beat | 16:9 Trailer | 9:16 Teaser | Visual & Overlay | Audio |
+| --- | --- | --- | --- | --- |
+| **Act I · Hook & problem** | `0–20 s` | `0–6 s` | Cold-open `question`/`myth` line + Doctor Lower Third (`Dr Rak, Men's Health Doctor`, MMC 6.3); 1–2 `stakes` lines with moments between | Each line's own source audio over a near-silent ambient bed |
+| **Signature title card** | `~20 s` (`2.5–3.5 s`) | `~6 s` | `[NAMA] MENGAJAR [TOPIK]` + `SUAMISIHAT MASTERCLASS · 5 EPISOD` + series title + brand logo | Single low hit, breath |
+| **Act II · Promise** | `20–55 s` | `6–20 s` | Doctor's own promise line (only if recorded), then lines from different episodes, `line → moment → line`; small episode badge on each line | Pulse / swell enters on the turn line |
+| **Act III · Climax montage** | `55–80 s` | `20–32 s` | 1-line hits from the remaining episodes cut on the beat; slow b-roll moments; **5-Episode Curriculum Card** (`01`–`05`, topics only, no answers) | Build to crescendo |
+| **Sign-off** | last `5–8 s` | last `4–6 s` | Doctor's recorded sign-off (only if recorded) → Neutral End Card (brand logo + `Jumpa doktor untuk pemeriksaan jika ada simptom`) | Music hard-stops on the final spoken word, then room tone |
 
-*Note: If a Masterclass has $N$ episodes (default $N=5$), the trailer must include one highlight clip from all $N$ episodes in sequence.*
+*Coverage rule: the 16:9 trailer includes at least one real line from all $N$ episodes (default $N=5$), in any order; the curriculum card lists them in order. The 9:16 teaser may cover fewer episodes. No line may resolve an episode's key answer, and every line must pass the meaning gate.*
 
 ---
 
@@ -142,13 +141,13 @@ All visual cards use the brand's 60:30:10 colour hierarchy from `brands/<slug>/b
 | **Safe area (text/cards)** | `x: 120..1800`, `y: 90..960` | `x: 120..960`, `y: 270..1248` (`y <= 1152` with disclaimer) |
 | **Doctor lower third / Ep badge** | `x: 120, y: 780` (`Poppins Bold 48 pt` + `Medium 30 pt`) | `x: 120, y: 925` (below chin, above caption band) |
 | **Subtitles / captions** | Sentence subtitles at `y: 890..1000` + `.srt`/`.vtt` files | Word-by-word 3-word groups at bottom `y <= 1248` |
-| **Target duration** | Trailer: `35–60 s` · Episodes (×5): `2–12 min` each | Trailer: `35–60 s` · Cutdowns: `30–60 s` each |
+| **Target duration** | Trailer: `60–90 s` (max `120 s`) · Episodes (×5): `2–12 min` each | Teaser: `25–40 s` · Cutdowns: `30–60 s` each |
 
 ---
 
 ## Hard Compliance Rules (MMC V2/2025, MAB & Brand Rules)
 
-1. **Mandatory 5-episode trailer**: Every Masterclass batch must produce a trailer containing a real clip from each episode (`EP01`–`EP05`).
+1. **Mandatory 5-episode trailer**: Every Masterclass batch must produce a trailer containing a real spoken line from each episode (`EP01`–`EP05`). No line is cut so that it drops a qualifier, flips its meaning or implies a result (meaning gate, `references/trailer-craft.md` §6). Promise and sign-off lines are used only if the doctor actually recorded them; never assembled from separate words or synthesised.
 2. **Doctor identification (MMC Guideline V2/2025 6.3)**: Whenever a real doctor teaches, identify them clearly on screen with a lower third (e.g. `Dr Rak, Men's Health Doctor`) in the Trailer, at the start of each of the 5 episodes, and in every standalone 9:16 cutdown.
 3. **No patient solicitation on doctor videos (MMC 3.2, 6.5; MAB 12/2007 amended 1/2025; Act 290 s.4A)**:
    - For **SS Clinic** (`ssclinic` Educational mode): real SS Clinic doctors (`appointed_doctors` in `brands/ssclinic/brand.json`) may teach evidence-based men's health topics, carry the SS Clinic logo on the end card, and be posted on the clinic page.
