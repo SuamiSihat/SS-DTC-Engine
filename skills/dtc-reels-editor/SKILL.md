@@ -49,8 +49,14 @@ Rendering: build `work/spec.json` (see `references/spec-format.md`) and run `scr
 See `references/` for beat plans, Meta policy notes and safe zones. Fill those in from the first batch and
 your own Meta policy review; do not treat the stubs as final.
 
-## Variant mode: funnel x hook x style (PLANNED)
-Status: agreed direction 2026-10-21. `render_batch.py` does not read these fields yet; today it renders versions A, B, C (and D where built). Until the code lands, plan variants in the batch note and render them as separate versions by hand.
+## Variant mode: funnel x hook x style
+Status: built 2026-11-03 (`scripts/variants.py`, wired into `render_batch.py`). List variants per clip in the spec, then:
+- `python scripts/render_batch.py <spec> --variants --check` runs the gate only and prints every BLOCK with its reason.
+- `python scripts/render_batch.py <spec> --variants` renders the variants that pass (files `<prefix><n>_V_<id>.mp4`). A/B/C runs exactly as before without the flag.
+- The gate enforces: at most 10 per clip; no duplicate funnel/hook/style; TOFU and MOFU 23-30 s, BOFU 15-20 s (body plus cold open); BOFU only with a `price_ref` from `prices.json` and never on SS Clinic; no literal prices; proof hook D is not built and never on SS Clinic; styles only from `product_rules` (set `"product"` on the variant), `clean` only for brands that list none; `faceless` blocked until the dtc-broll rule change.
+- Styles change framing and cut rhythm only: `clean` alternates wide/tight per segment, `story` stays wide, `energy` adds a wide/tight punch-in at a word boundary inside segments over 4 s. Speed ramps and SFX hits are not built.
+- BOFU end card: product name plus price from `prices.json`. TOFU/MOFU: the spec's end card line, no price.
+- Today no brand lists `energy`, and Dr. MIT Ring, SS Clinic and Mensculine list no styles at all, so they get `clean` only (at most 9 variants: 3 funnels x hooks A/B/C). Add styles to `brand.json` `product_rules` to open more.
 
 Goal: up to 10 videos from one source clip, each a different combination of funnel stage, hook and style. Hooks and styles are chosen from the source video and its topic, never forced to fill a quota.
 
