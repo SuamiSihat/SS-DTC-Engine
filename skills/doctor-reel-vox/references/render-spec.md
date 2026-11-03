@@ -25,7 +25,7 @@ Per frame, downscaled to 54x96: share of pixels with B>120 and R<60. Card is ON 
 - Partial revision: a hook-only change re-renders only 0 to about 24 s and reassembles.
 
 ### A. Speaker treatment
-- `editorial()`: desaturate 0.86; contrast `(f-0.5)*1.06+0.49`; lift blacks `0.035 + f*0.95`; split tone shadows `(1-lum)^2 * [-0.012, 0.004, 0.018]`, highlights `lum^2 * [0.022, 0.008, -0.018]`; bloom (highlights >0.72 at quarter res, blur 6, screen 0.55); vignette k=0.30 (centre at 45% height, radius 0.72). Grain amplitude 0.006.
+- `editorial()`: desaturate 0.86 (keep 86% of the saturation); contrast `(f-0.5)*1.06+0.49`; lift blacks `0.035 + f*0.95`; split tone shadows `(1-lum)^2 * [-0.012, 0.004, 0.018]`, highlights `lum^2 * [0.022, 0.008, -0.018]`; bloom (highlights >0.72 at quarter res, blur 6, screen 0.55); vignette k=0.30 (centre at 45% height, radius 0.72). Grain amplitude 0.006.
 - **[EDU]** Applied to the doctor only when the brief sets `doctor_grade: true`. Default off. Never on disclaimer-card frames.
 - Hook punch-in: z 1.0 to 1.10 over the first 1.2 s (ease-out cubic) before the hook scene, then 1.06. Anchor at 22% height.
 
@@ -39,7 +39,7 @@ Per frame, downscaled to 54x96: share of pixels with B>120 and R<60. Card is ON 
   - Top line: Gelasio Bold (wght 700), 72 px, white. Glow (235, 245, 255) r16 / k0.64, shadow 0.85.
   - KEYWORD: Poppins Bold 70 px UPPERCASE, azure #21A1F7. Glow (70, 170, 255) r18 / k0.94 plus wide halo (60, 160, 255) blur 26 x 0.675 underneath. Re-composite crisp letters on top. Pad canvas 60 px so the halo never clips.
   - Spacing: keyword cap-top sits 16 px under the top-line baseline.
-  - Position: block centre y about 1240 on the blueprint scene, about 1120 on the speaker, with a dark horizontal scrim (Gaussian sigma 170, 0.45) behind it on the speaker.
+  - Position: block centre y about 1240 on the blueprint scene (moved up as needed so the letters end at y 1248, the safe-area bottom), about 1120 on the speaker, with a dark horizontal scrim (Gaussian sigma 170, 0.45) behind it on the speaker.
   - Animation: top line fades and rises 12 px over 0.18 s; keyword scales 1.12 to 1.0 over 0.2 s, delayed 0.12 s.
   - Hook captions stop at the disclaimer card.
   - Keep inside the safe zones (`dtc-reels-editor/references/safe-zones.md`).
@@ -48,7 +48,8 @@ Per frame, downscaled to 54x96: share of pixels with B>120 and R<60. Card is ON 
 - Doctor on screen: Poppins SemiBold 54 px, white, soft shadow 0.9, centred y=1150.
 - Over a Vox overlay: Instrument Serif Italic 66 px, cream (244, 236, 220) on a teal (18, 92, 110, alpha 225) box, padding 18 px, centred y=1130.
 - Grouping: at most 26 characters and 5 words per subtitle, break at punctuation. Shows from its first word to the next group's start, held at most 0.45 s past its last word. Fade and rise 8 px over 0.15 s.
-- **[EDU]** Lower third "Dr Rak, Men's Health Doctor" for about 4 s from `CARD[1]`, inside safe zones, off the face.
+- **[EDU]** Lower third "Dr Rak, Men's Health Doctor" for about 4 s from `CARD[1]`, left edge x 120, centre y 1010 (inside the safe area, above the subtitles, off the face). Hidden while an overlay is on screen.
+- Subtitles wider than the safe area (840 px) are scaled down to fit.
 
 ### D. Vox overlays (2.5D)
 - Photo parallax: bg layer pushes `push=(z0, z1)` (typically 1.02-1.06 to 1.10-1.20) with drift x0.6; fg layer pushes z + `fg_extra`*p (0.04-0.06) with drift x1.4. Drift typically (0, -20..-40) or (+/-20-30, 0).

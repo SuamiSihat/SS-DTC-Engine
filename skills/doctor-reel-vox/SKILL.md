@@ -61,7 +61,18 @@ rules conflict, the engine and `brands/ssclinic/brand.json` win (decision: Head 
 - Turning the doctor grade on.
 - Sign-off before launch.
 
+## Renderer
+`scripts/render_doctor_reel.py` (plan format: `python scripts/render_doctor_reel.py plan-example`).
+- `detect-card RAW` gives the card window; `words RAW chunks.json --card a b --out work/<clip>_words.json` gives word timings;
+  `prep-layers IMAGE work/layers [--sticker] [--object]` cuts parallax layers or the hook sticker.
+- `render work/plan.json` renders 3 parts in parallel, mixes SFX, adds the Educational end card, assembles, then runs
+  `check_sync.py`, writes a `.timeline.json` and runs `check_layout.py` (with a face track from `face_track.py`),
+  and saves a frame grid and a hook-caption crop to `qa/`. Results go to `qa/<name>_qa.json`.
+- Fonts: Gelasio and Instrument Serif are in `assets/fonts/` (OFL). Missing Google Fonts are downloaded there without asking.
+- End-card logo comes from `brand.json` `logo_files.on_dark_background`, found under `DESIGN_SYSTEM_ROOT`. The wordmark is never retyped.
+
 ## Known gaps
-- `scripts/render_doctor_reel.py` is not written yet. The spec in `references/render-spec.md` is complete enough to build it. Until it exists, do not claim the engine renders this format.
+- The renderer has only been run on a synthetic smoke clip. It has NOT been matched against the approved DRA Chp 4 renders,
+  because those raws are not on this PC or the NAS. Do the clip 9 side-by-side before trusting the look.
 - CapCut project export (original template section 4) is not ported yet. Add it only after the renderer works.
 - The cloud session branch `batch/dra-chp4-01` never reached GitHub (403), so the original render code is not recoverable. Rebuild from the spec.
