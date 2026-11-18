@@ -1,0 +1,10 @@
+# Lint baseline for CI (.github/workflows/ci.yml). Bug-class rules only for now:
+# syntax errors, undefined names and other pyflakes errors. Tighten once the
+# existing scripts are cleaned up (unused imports/variables are ignored for now).
+target-version = "py311"
+line-length = 160
+extend-exclude = [".claude", "batches", "models", "swipe-library"]
+
+[lint]
+select = ["E9", "F"]
+ignore = ["F401", "F541", "F841"]

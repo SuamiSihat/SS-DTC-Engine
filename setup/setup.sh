@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Mac/Linux setup. Review before running. Installs tools, then runs the self-test.
 set -e
-echo "== DMR Reels Engine setup =="
+echo "== SS-DTC Engine setup =="
 if [ "$(uname)" = "Darwin" ]; then
   command -v brew >/dev/null || { echo "Install Homebrew first: https://brew.sh"; exit 1; }
   brew install ffmpeg node python git

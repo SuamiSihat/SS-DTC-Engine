@@ -1,6 +1,6 @@
 # Windows setup (PowerShell). Review before running. Needs winget (Windows 10/11).
 $ErrorActionPreference = "Stop"
-Write-Host "== DMR Reels Engine setup =="
+Write-Host "== SS-DTC Engine setup =="
 winget install --id Gyan.FFmpeg -e --accept-source-agreements --accept-package-agreements
 winget install --id OpenJS.NodeJS.LTS -e
 winget install --id Python.Python.3.11 -e

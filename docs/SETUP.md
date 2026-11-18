@@ -11,6 +11,7 @@ For the person installing the engine on a PC. Everyone else can skip this docume
 6. Install the skills into Claude Code: `python scripts/install_skills.py` (copies `skills/` to `.claude/skills/`; re-run after changing a skill).
 7. Self-test: `python setup/check_env.py` and `python scripts/check_sync.py --selftest`
 8. Stock b-roll (optional): create free API keys at pexels.com/api and pixabay.com/api/docs, put them in `config.env` (`PEXELS_API_KEY`, `PIXABAY_API_KEY`) with `BROLL_LIBRARY` (NAS folder), then run `python scripts/stock_fetch.py fetch-model` (YuNet face model, newest default for OpenCV 5) and `python scripts/stock_fetch.py selftest`. Keys stay in `config.env`, which git ignores.
+9. Concept photos (optional, `scripts/render_concepts.py`): put a Bedrock API key in `config.env` as `AWS_BEARER_TOKEN_BEDROCK` (and `AWS_REGION`, default `us-east-1`), or `pip install boto3` and set `AWS_PROFILE` instead. Test without a key using `--engine mock`.
 
 ## Running a batch
 1. Drop raw clips on the NAS `incoming/<batch-name>/`.

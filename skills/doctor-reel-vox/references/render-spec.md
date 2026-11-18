@@ -1,7 +1,7 @@
 # Render spec: doctor reel, Vox template
 
 Source: the approved DRA Chp 4 template (clips 6-9). Educational-mode changes are marked **[EDU]**. Everything else is the approved look.
-Renderer to build: `scripts/render_doctor_reel.py` (Python numpy/OpenCV/PIL frames piped to ffmpeg libx264).
+Renderer: `scripts/render_doctor_reel.py` (Python numpy/OpenCV/PIL frames piped to ffmpeg libx264).
 
 ## 1. Canvas and files
 - 1080x1920, 30 fps. Read the source with ffmpeg rawvideo.

@@ -82,7 +82,7 @@ def main():
         if a.texts:
             out.append(("INFO", "Policy screen is a keyword check against skills/dtc-reels-editor/references/meta-policy.md (not legal advice). Ads on sexual or men's health products must be targeted 18+."))
         if btype == "service" and a.doctor is not None:
-            out.append(("REVIEW", "Doctor-led ad for a clinic service: MAB services guideline 4.2 and the MMC guideline on dissemination of information limit promoting a practitioner. Brand owner and clinic compliance adviser must confirm."))
+            out.append(("REVIEW", "Doctor-led ad for a clinic service: MAB services guideline 4.2 and MMC Guideline V2/2025 (dissemination of information, including social media) limit promoting a practitioner. Brand owner and clinic compliance adviser must confirm."))
 
     if a.json:
         print(json.dumps([{"level": l, "msg": m} for l, m in out], indent=2, ensure_ascii=False))
