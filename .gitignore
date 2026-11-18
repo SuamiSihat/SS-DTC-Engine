@@ -4,6 +4,10 @@ batches/*/work/
 batches/*/renders/
 batches/*/qa/
 batches/*/deliver/
+# Review packages (scripts/review.py) contain frames of the footage
+batches/*/review/
+# Batch product images come from brand assets (proprietary licence)
+batches/*/assets/
 *.mp4
 *.mov
 *.wav
@@ -36,5 +40,4 @@ models/
 /swipe-library/
 # Rasterised logo cache (scripts/render_static.py)
 batches/_cache/
-# Test batch for static renders
-batches/static-test/assets/
+

@@ -110,7 +110,7 @@ The human confirms, per batch: each hook and headline wording; any testimonial, 
 - Get the current MAB services guideline document (newer than MAB 6/2011) and the MAB products policy list.
 - Ask a Malaysian healthcare advertising adviser, in writing: (1) the exact neutral closing line the doctor may use; (2) whether doctor-led product ads (Dr. MIT Ring) fit MMC 5.14 given the product's regulatory status.
 - DONE 2026-10-21: SS Clinic logo / clinic-page posting for Educational videos and the lower third title confirmed acceptable (brand decision log).
-- `scripts/check_brand.py` still names the older "MMC guideline on dissemination of information" in its doctor-led service message; update the wording to V2/2025 when the code is next changed.
+- DONE 2026-11-18: `scripts/check_brand.py` doctor-led service message now cites MMC Guideline V2/2025.
 - TikTok ad policy for health and sexual health has not been researched yet.
 - DONE 2026-10-21: keyword screen added in `scripts/policy_rules.py`, run by `scripts/check_brand.py` (REVIEW only). Extend the word lists after each batch review; it cannot judge context.
 - DONE 2026-10-21: MMC V2/2025 and MAB services policy (15 May 2025) read and applied.
