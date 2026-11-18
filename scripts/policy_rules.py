@@ -21,7 +21,7 @@ RULES = [
      r"\b(zakar|penis|kemaluan|batang|alat sulit|genital\w*)\b",
      "Explicit anatomy word. Fruit metaphors only; Meta adult content review risk. A person decides if the doctor's real words can be used."),
     ("cure-guarantee", "all",
-     r"\b(sembuh\w*|pulih sepenuhnya|cure\w*|heal\w*|dijamin|jaminan|guarantee\w*|pasti (berjaya|berkesan)|kekal selamanya|dalam (masa )?\d+ (hari|minggu|days|weeks))\b|100 ?%",
+     r"\b(sembuh\w*|pulih sepenuhnya|cure[sd]?|curing|heal(s|ed|ing)?|dijamin|jaminan|guarantee\w*|pasti (berjaya|berkesan)|kekal selamanya|dalam (masa )?\d+ (hari|minggu|days|weeks))\b|100 ?%",
      "Meta unrealistic outcomes: no cure/heal claims for incurable conditions, no guarantees, and specific results or timeframes need an approved disclaimer."),
     ("before-after", "all",
      r"\b(sebelum( dan)? selepas|before( and|/|&)? ?after)\b",

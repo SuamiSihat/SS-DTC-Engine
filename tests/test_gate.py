@@ -68,6 +68,13 @@ class PolicyRules(unittest.TestCase):
         self.assertIn("testimonial", self.ids("Testimoni pesakit kami", "service"))
         self.assertIn("testimonial", self.ids("Testimoni pelanggan kami", "product"))
 
+    def test_cure_guarantee_ignores_health(self):
+        self.assertNotIn("cure-guarantee", self.ids("Men's health doctor, health check setiap tahun", "service"))
+        self.assertNotIn("cure-guarantee", self.ids("Ikut prosedur yang betul", "service"))
+        for line in ("Heals in a week", "It cures everything", "Dijamin berkesan", "Healing fast"):
+            with self.subTest(line=line):
+                self.assertIn("cure-guarantee", self.ids(line, "product"))
+
     def test_rules_are_well_formed(self):
         for rule in policy_rules.RULES:
             self.assertEqual(len(rule), 4, rule)
