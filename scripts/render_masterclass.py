@@ -7,6 +7,8 @@ Usage:
 Outputs:
   batches/<batch>/renders/16x9/<slug>_16x9.mp4 (+ .timeline.json, .srt, .vtt)
   batches/<batch>/renders/9x16/<slug>_9x16.mp4 (+ .timeline.json, .srt)
+Every output starts with the 3 s SuamiSihat logo intro (scripts/render_intro.py); timeline and subtitles are
+shifted to match. Spec "intro": "none" or --no-intro turns it off.
 """
 import argparse, json, os, pathlib, re, subprocess, sys
 from PIL import Image, ImageDraw, ImageFont
@@ -34,6 +36,15 @@ SPK16_X, SPK16_Y, SPK16_W, SPK16_H, SPK16_R = 80, 76, 780, 828, 32
 BRD16_X, BRD16_Y, BRD16_W, BRD16_H = 900, 76, 940, 828
 CAP16_BOTTOM = 1012
 CAP16_SIZE = 42
+INTRO = True  # set from spec "intro" / --no-intro in main()
+
+
+def add_intro(out):
+    """SuamiSihat logo intro in front of a finished Masterclass render (file, timeline, subtitles in place)."""
+    if not INTRO:
+        return out
+    import render_intro
+    return render_intro.prepend(out, in_place=True)
 
 
 def font(name, size):
@@ -919,6 +930,7 @@ def build_trailer(spec, batch, work, out16, out9, logo, bg16, mask16, fmt):
             out, tot = render_16x9(rname, items, ovs, brolls, ass, fixes, out16, work, fps, bg16, mask16)
         else:
             out, tot = render_9x16(rname, items, ovs, brolls, ass, fixes, out9, work, fps)
+        add_intro(out)
         print(f"  -> {out.name} ({tot:.1f}s, {len(brolls)} visual cuts)", flush=True)
 
 
@@ -1004,6 +1016,7 @@ def build_episode(ep, spec, batch, work, out16, out9, logo, bg16, mask16, lt9_pn
         rname16 = f"{ep['slug']}_16x9"
         print(f"Rendering {rname16} ...", flush=True)
         out, tot = render_16x9(rname16, items, ovs, brolls, ass, fixes, out16, work, fps, bg16, mask16)
+        add_intro(out)
         print(f"  -> {out.name} ({tot:.1f}s, {len(brolls)} visual cuts)", flush=True)
 
     # ---- 9:16 Vertical Cutdown ----
@@ -1064,6 +1077,7 @@ def build_episode(ep, spec, batch, work, out16, out9, logo, bg16, mask16, lt9_pn
         rname9 = f"{ep['slug']}_9x16"
         print(f"Rendering {rname9} ...", flush=True)
         out, tot = render_9x16(rname9, items, ovs, brolls, ass, fixes, out9, work, fps)
+        add_intro(out)
         print(f"  -> {out.name} ({tot:.1f}s, {len(brolls)} B-roll cuts)", flush=True)
 
 
@@ -1072,10 +1086,13 @@ def main():
     ap.add_argument("spec")
     ap.add_argument("--only", help="EP00, EP01, EP02, EP03, EP04, or EP05")
     ap.add_argument("--format", default="both", choices=["both", "16x9", "9x16"])
+    ap.add_argument("--no-intro", action="store_true", help="skip the SuamiSihat logo intro")
     a = ap.parse_args()
 
     spec_path = pathlib.Path(a.spec).resolve()
     spec = json.load(open(spec_path, encoding="utf-8"))
+    global INTRO
+    INTRO = not a.no_intro and spec.get("intro", "suamisihat") not in (None, False, "none")
     batch = spec_path.parent.parent if spec_path.parent.name == "work" else spec_path.parent
     work = batch / "work"
     out16 = batch / "renders" / "16x9"
