@@ -54,6 +54,7 @@ A standard Masterclass has **5 episodes** (`EP01` to `EP05`) and **1 Series Trai
    - Verify `trailer.lines` covers **every** episode in `episodes` (`EP01`–`EP05`) at least once.
    - Render 16:9 Trailer + 5 Full Episodes to `batches/<batch>/renders/16x9/` (`1920x1080`, `libx264`, `crf 18–20`, `30 fps`).
    - Render 9:16 Trailer + 9:16 Episode/Chapter Cutdowns to `batches/<batch>/renders/9x16/` (`1080x1920`, `libx264`, `crf 20`, `30 fps`).
+   - **SuamiSihat logo intro (all Masterclass renders, 16:9 and 9:16)**: `render_masterclass.py` puts the 3 s intro (`scripts/render_intro.py`) in front of every Trailer, Episode and Cutdown and shifts its `.timeline.json`, `.srt` and `.vtt` to match. Write `chapters.txt` from the final file: `00:00` is the intro, so the first chapter starts at `00:03`. Only `"intro": "none"` in the spec or `--no-intro` turns it off, and only if the brief says so. The intro is Masterclass-only: never add it to Reels ads, statics or doctor reels.
 8. **QA gate**:
    - Re-run `scripts/check_brand.py` on all final text (trailer cards, episode/chapter titles, takeaway cards, slide labels, captions).
    - Verify the Trailer includes all 5 episodes (`EP01`–`EP05`).
