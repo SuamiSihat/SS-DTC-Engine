@@ -1,6 +1,6 @@
 # Meta and Malaysia ad policy notes
 
-Researched 2026-10-21 by Claude, updated the same day with the 2025 MMC guideline and the 2025 MAB services policy. NOT legal advice and NOT approved yet. A person reviews and approves this file, and compliance decisions go to the human (see CLAUDE.md). Re-check before each batch: policies change and some sources below are dated.
+Researched 2026-10-21 by Claude, updated the same day with the 2025 MMC guideline and the 2025 MAB services policy; TikTok section 2b added 2026-11-18. NOT legal advice and NOT approved yet. A person reviews and approves this file, and compliance decisions go to the human (see CLAUDE.md). Re-check before each batch: policies change and some sources below are dated.
 
 ## How reliable is this
 - Read directly from the regulator (2026-10-21): MMC Guideline V2/2025 (dissemination of information, including social media), MAB Policy and Decision (Services) dated 15 May 2025, Act 290 text, Meta "Unrealistic outcomes".
@@ -90,6 +90,51 @@ Pages to check: transparency.meta.com/policies/ad-standards (Restricted goods an
 
 **Disguised wording**: do not use creative spelling, emoji swaps or code words to get flagged terms past platform review. It is policy evasion and risks ad rejection and account action. If a line is flagged, choose a different real line.
 
+## 2b. TikTok rules (researched 2026-11-18, verify on the live pages)
+NOT legal advice and NOT approved yet. TikTok also requires ads to follow local law, so section 1 still applies in full.
+
+**How reliable is this**
+- The TikTok Ads help pages (ads.tiktok.com/help) were read by a research subagent on 2026-11-18; quotes below are from its fetch. A second fetch from this PC got HTTP 403, so a person must open each page in a browser and confirm the wording and "Last updated" date before relying on it.
+- The Branded Content Policy (tiktok.com/legal, effective 30 Oct 2026) was read directly from this PC.
+- Not found: TikTok's ad page on personal attributes / discrimination and the Teen Safety page. Until checked, apply Meta's personal-attributes rule (section 2) to TikTok too.
+- Lines marked *Claude's inference* are not TikTok text; TikTok does not name our brands.
+
+**Sexual health and adult products** (Adult Content, updated Aug 2026)
+- Worldwide: "Sexual products are not allowed", including "the enhancement of sexual performance, pleasure, or bodily appearance, such as drugs, medications, tools, or devices such as penis enlargement".
+- No "sexually explicit text, audio or term that directly describes or references specific sexual activity, body parts, or sexual products"; no emphasis on sensitive body parts.
+- Malaysia (Healthcare and Pharmaceuticals, updated Sep 2026): condoms may be allowed with 18+ targeting. Gynaecology and andrology: only pregnancy/ovulation tests (MDA) and cycle trackers; "other gynecology andrology products or services" are not allowed.
+
+**Healthcare services, devices and medicines (Malaysia)**
+- Medical institutions: may be allowed with a PHFSA licence and 18+ targeting.
+- Medical devices: need an MDA licence and 18+. Listed as not allowed: "Gynecology and andrology products or services such as supplements, medicines, and hospitals".
+- OTC medicines need MAB approval, 18+ and usage and safety disclosures. Prescription medicines are not allowed.
+- Lead forms may not collect health or sex-life information without written consent from a TikTok sales rep (Ad Format and Functionality, Apr 2026).
+
+**Health claims and results** (Misleading and False Content, updated Nov 2026; Weight Management and Body Image, Sep 2026)
+- No promised or exaggerated results, no "absolute terms" about a product (TikTok's example: "Number 1 essence on TikTok"), no instant results ("Get slim legs right away"), no cures for incurable diseases. This applies to products, not only services.
+- No before-and-after comparisons that give a false or distorted impression of results.
+- No blurred or implied sexual content or deceptive wording used as click bait.
+- Significantly AI-generated or AI-edited content (images, video, voice) needs TikTok's AIGC label or a clear disclaimer.
+- No claims that appearance determines confidence, self-esteem or desirability. Weight or muscle claims need 18+ worldwide.
+
+**Creators, branded content and Spark Ads** (Branded Content Policy, effective 30 Oct 2026, read directly)
+- Creators must switch on the commercial content disclosure toggle and name the product clearly.
+- Prohibited for branded content worldwide: "Adult and sexual products and services" and "Any medical institutions, treatments or devices, including nutritionists, online pharmacies and telehealth providers".
+- Malaysia: branded content for condoms and lubricants is not allowed; OTC medicines and vitamin supplements are allowed, 18+ and shown in Malaysia only.
+- Spark Ads boost organic posts (with the creator's authorisation); all ad policies still apply.
+
+**Format** (Ad Format and Functionality, Apr 2026)
+- Malaysia: ad languages Bahasa Melayu, English, Chinese; no QR codes to third-party sites, including social media pages.
+- All markets: video 5-60 s in 9:16, 1:1 or 16:9 with clear audio; static images at most 50% of the video; no text for functions that do not work ("Swipe up"); no symbols mixed into words.
+
+**What changes in our pipeline (for the human to confirm)**
+- SS Clinic: andrology services are not allowed in Malaysia and medical institutions are banned from branded content. *Claude's inference*: no TikTok version of SS Clinic KOL ads, and boosting Educational posts is doubtful. Keep SS Clinic paid work Meta-only unless a TikTok Malaysia rep confirms in writing.
+- MENSS Penile Pump: enhancement and enlargement devices are banned worldwide. No TikTok ads or creator posts.
+- Dr. MIT Ring and MENSS rings: *Claude's inference*: likely read as sexual products or andrology devices. Get a rep's written ruling before any TikTok render. No creator (branded content) posts for them in Malaysia.
+- Words: explicit anatomy terms are banned outright on TikTok, so an `explicit-anatomy` hit is a BLOCK for TikTok outputs. Superlatives and "No. 1" apply to products too.
+- Statics cannot run alone as TikTok video ads; full-length doctor reels over 60 s only as Spark Ads (check the current limit with a rep).
+- Any AI scene (`product-concept-photo`) or AI voice (`render_direction.py` edge-tts) needs the AIGC label on TikTok.
+
 ## 3. Rules applied in the pipeline (from the above and earlier decisions)
 - Fruit metaphors only; no anatomy imagery, no pills, no distressed people. No inflation or pressure metaphors (balloons, engines, pumps) for devices.
 - No second-person condition statements in headlines, captions or hooks ("Anda ada masalah ...", "Are you suffering ...").
@@ -111,7 +156,7 @@ The human confirms, per batch: each hook and headline wording; any testimonial, 
 - Ask a Malaysian healthcare advertising adviser, in writing: (1) the exact neutral closing line the doctor may use; (2) whether doctor-led product ads (Dr. MIT Ring) fit MMC 5.14 given the product's regulatory status.
 - DONE 2026-10-21: SS Clinic logo / clinic-page posting for Educational videos and the lower third title confirmed acceptable (brand decision log).
 - DONE 2026-11-18: `scripts/check_brand.py` doctor-led service message now cites MMC Guideline V2/2025.
-- TikTok ad policy for health and sexual health has not been researched yet.
+- DONE 2026-11-18 (draft): TikTok ad policy researched, section 2b. Open: confirm each TikTok page in a browser (this PC gets HTTP 403), find TikTok's personal-attributes and Teen Safety ad pages, and ask a TikTok Malaysia sales rep in writing whether SS Clinic, Dr. MIT Ring and the MENSS rings may advertise or use branded content.
 - DONE 2026-10-21: keyword screen added in `scripts/policy_rules.py`, run by `scripts/check_brand.py` (REVIEW only). Extend the word lists after each batch review; it cannot judge context.
 - DONE 2026-10-21: MMC V2/2025 and MAB services policy (15 May 2025) read and applied.
 
@@ -129,3 +174,12 @@ The human confirms, per batch: each hook and headline wording; any testimonial, 
 - Medicines (Advertisement and Sale) Act 1956, Act 290: https://pharmacy.moh.gov.my/sites/default/files/document-upload/medicine-advertisement-sale-act-1956-act-290_1.pdf
 - MAB guidelines for advertising healthcare services (MAB 6/2011): https://pharmacy.moh.gov.my/sites/default/files/document-upload/advertisement-guidelines-services-edited-mab-6-2011.pdf
 - Baker McKenzie, Promoting Medical Products Globally, Malaysia chapter (2018): https://www.bakermckenzie.com/-/media/files/insight/publications/2019/05/dsc127515_malaysia_promoting-medical-products2018.pdf
+- TikTok Advertising Policies index (Aug 2025): https://ads.tiktok.com/help/article/tiktok-advertising-policies-industry-entry
+- TikTok Healthcare and Pharmaceuticals (Sep 2026): https://ads.tiktok.com/help/article/tiktok-ads-policy-healthcare-pharmaceuticals
+- TikTok Adult Content (Aug 2026): https://ads.tiktok.com/help/article/tiktok-ads-policy-adult-content
+- TikTok Misleading and False Content (Nov 2026): https://ads.tiktok.com/help/article/tiktok-ads-policy-misleading-and-false-content
+- TikTok Weight Management and Body Image (Sep 2026): https://ads.tiktok.com/help/article/tiktok-ads-policy-weight-management
+- TikTok Ad Format and Functionality (Apr 2026): https://ads.tiktok.com/help/article/tiktok-ads-policy-ad-format-and-functionality
+- TikTok Industries with Certificate Requirements, SEA and NEA (Feb 2025): https://ads.tiktok.com/help/article/industries-with-certificate-requirements-sea-nea
+- TikTok About Spark Ads (Jun 2026): https://ads.tiktok.com/help/article/spark-ads
+- TikTok Branded Content Policy (effective 30 Oct 2026, read directly): https://www.tiktok.com/legal/page/global/bc-policy/en
