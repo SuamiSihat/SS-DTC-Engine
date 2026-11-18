@@ -5,6 +5,8 @@ by cross-correlating 16 kHz mono audio. Needs ffmpeg on PATH, numpy, scipy.
 Usage:
   check_sync.py final.mp4 raw.mp4 [--max-offset 0.04] [--max-search 5.0]
   check_sync.py --timeline renders/<name>.timeline.json [more.timeline.json ...] [--max-offset 0.04]
+  check_sync.py --vo renders/<name>.timeline.json [...]   voice-over videos (no source speech): each VO line
+                (timeline "vo": start, dur, mp3) must sit at its planned time in the final file
   check_sync.py --selftest
 """
 import argparse, json, os, pathlib, subprocess, sys
@@ -69,6 +71,27 @@ def check_timeline(tl_path, max_offset, max_search):
     print(f"{status} {mp4.name} ({len(items)} segments): max offset {worst:+.3f}s (limit {max_offset}s)")
     return all_ok
 
+def check_vo(tl_path, max_offset):
+    tlp = pathlib.Path(tl_path)
+    d = json.loads(tlp.read_text(encoding="utf-8"))
+    mp4 = tlp.with_name(d["file"])
+    lines = [v for v in d.get("vo", []) if v.get("mp3")]
+    if not mp4.exists() or not lines:
+        print(f"FAIL {tlp.name}: {'mp4 not found' if not mp4.exists() else 'no vo lines with mp3 in timeline'}")
+        return False
+    worst, ok = 0.0, True
+    for i, v in enumerate(lines):
+        ws = max(0.0, v["start"] - 0.5); lead = v["start"] - ws
+        a_fin = load_audio(mp4, start_s=ws, dur_s=v["dur"] + 1.0)
+        off = best_offset(a_fin, load_audio(v["mp3"]), 1.0) - lead
+        worst = off if abs(off) > abs(worst) else worst
+        if abs(off) > max_offset:
+            ok = False; print(f"  vo {i+1} @ {v['start']:.2f}s: FAIL offset {off:+.3f}s")
+        if v.get("shot_end") is not None and v["start"] + v["dur"] > v["shot_end"] + 1e-3:
+            ok = False; print(f"  vo {i+1} @ {v['start']:.2f}s: FAIL runs past its shot ({v['start'] + v['dur']:.2f}s > {v['shot_end']:.2f}s)")
+    print(f"{'PASS' if ok else 'FAIL'} {mp4.name} ({len(lines)} VO lines): max offset {worst:+.3f}s (limit {max_offset}s)")
+    return ok
+
 def selftest():
     rng = np.random.default_rng(0)
     base = rng.standard_normal(SR * 12).astype(np.float32)
@@ -88,16 +111,20 @@ def main():
     p = argparse.ArgumentParser()
     p.add_argument("args", nargs="*")
     p.add_argument("--timeline", nargs="+", help="one or more .timeline.json files")
+    p.add_argument("--vo", nargs="+", help="voice-over timelines: check each VO line's position in the final file")
     p.add_argument("--max-offset", type=float, default=0.04)
     p.add_argument("--max-search", type=float, default=5.0)
     p.add_argument("--selftest", action="store_true")
     a = p.parse_args()
     if a.selftest:
         sys.exit(selftest())
+    if a.vo:
+        res = [check_vo(f, a.max_offset) for f in a.vo]
+        sys.exit(0 if all(res) else 1)
     tl_files = list(a.timeline or []) + [x for x in a.args if x.endswith(".timeline.json")]
     if tl_files:
-        ok = all(check_timeline(f, a.max_offset, a.max_search) for f in tl_files)
-        sys.exit(0 if ok else 1)
+        res = [check_timeline(f, a.max_offset, a.max_search) for f in tl_files]
+        sys.exit(0 if all(res) else 1)
     if len(a.args) != 2:
         p.error("need final.mp4 and raw.mp4, or --timeline <file.timeline.json>")
     final, raw = a.args
