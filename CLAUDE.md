@@ -20,7 +20,7 @@ Always:
 - MENSS Ring (blue) and Dr. MIT Ring (green) are separate brands: never in the same batch.
 - When finished, send ALL files, not samples, plus a short note of what to confirm.
 - Never write API keys or passwords into the repo.
-- Run log on every batch: `python scripts/run_log.py start <batch> --workflow reels|masterclass|static|doctor-reel` before the first step; wrap each long script as `python scripts/run_log.py time <batch> "<step>" -- python scripts/<script> ...`; finish with `python scripts/run_log.py end <batch> --deliver <NAS deliver folder>`. It records time per step, outputs per raw clip and Claude tokens, and writes `RUN LOG.md` into the deliver folder.
+- Run log on every batch: `python scripts/run_log.py start <batch> --workflow reels|masterclass|static|doctor-reel|direction|concepts|carousel` before the first step; wrap each long script as `python scripts/run_log.py time <batch> "<step>" -- python scripts/<script> ...`; finish with `python scripts/run_log.py end <batch> --deliver <NAS deliver folder>`. It records time per step, outputs per raw clip and Claude tokens, and writes `RUN LOG.md` into the deliver folder.
 
 Token budget (every turn re-reads the whole session, so context size x turns is the cost):
 - One batch per session. After delivery, start a fresh session (`/clear`) instead of continuing into the next batch or an unrelated fix.
