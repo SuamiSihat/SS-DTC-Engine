@@ -3,14 +3,17 @@
 Writes batches/<batch>/qa/run_log.json (git-ignored) and a readable RUN LOG.md
 into the batch deliver folder (local, and the NAS one if given).
 
-  python scripts/run_log.py start  <batch> --workflow reels|masterclass|static
+  python scripts/run_log.py start  <batch> --workflow reels|masterclass|static|doctor-reel|direction|concepts|carousel
   python scripts/run_log.py time   <batch> <label> -- <command ...>   # times one step
   python scripts/run_log.py end    <batch> [--deliver //Ssnas/drm/SS-DTC/deliver/<batch>] [--session <file.jsonl>]
+                                   [--tokens output=12.3k input=800 cache_read=1.2m cache_write=45k [--tokens-note "..."]]
+  python scripts/run_log.py tokens <batch> output=... input=... cache_read=... cache_write=... [--note "..."]
   python scripts/run_log.py report                                   # all batches, averages
 
 Tokens are read from Claude Code session logs (~/.claude/projects/<repo>*/*.jsonl)
-inside the run's time window. Runs done in the Claude chat app keep no local
-log, so tokens show as "not recorded".
+inside the run's time window. When there is no local log (the chat app, another
+PC, a remote session), enter the totals by hand with `end --tokens` or, after
+`end`, with `tokens` (rewrites RUN LOG.md). Values accept k / m suffixes.
 """
 import argparse, datetime as dt, json, os, pathlib, re, subprocess, sys, time
 
@@ -18,6 +21,10 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 VIDEO = {".mp4", ".mov"}
 IMAGE = {".png", ".jpg", ".jpeg"}
 TOKEN_KEYS = ("input_tokens", "output_tokens", "cache_creation_input_tokens", "cache_read_input_tokens")
+TOKEN_ALIASES = {"input": "input_tokens", "output": "output_tokens",
+                 "cache_write": "cache_creation_input_tokens", "cache_read": "cache_read_input_tokens"}
+WORKFLOWS = ["reels", "masterclass", "static", "doctor-reel", "direction", "concepts", "carousel"]
+AUTO_SOURCE = "Claude Code session logs"
 
 
 def now():
@@ -134,7 +141,42 @@ def tokens(t0, t1, files=None):
     total["turns"] = len(seen)
     total["sessions"] = sorted(sessions)
     total["models"] = sorted(models)
+    total["source"] = AUTO_SOURCE
     return total
+
+
+def parse_tokens(pairs, note=""):
+    """Hand-entered totals, e.g. ['output=12.3k', 'cache_read=1.2m'] (as shown by Claude's usage/cost screen)."""
+    total = {k: 0 for k in TOKEN_KEYS}
+    for p in pairs:
+        k, _, v = p.partition("=")
+        key = TOKEN_ALIASES.get(k.strip().lower().replace("-", "_"), k.strip())
+        m = re.fullmatch(r"(\d+(?:\.\d+)?)([km]?)", v.strip().lower().replace(",", "").replace("_", ""))
+        if key not in TOKEN_KEYS or not m:
+            sys.exit(f"Bad token value '{p}'. Use output=, input=, cache_read=, cache_write= with a number (k / m allowed).")
+        total[key] += round(float(m[1]) * {"": 1, "k": 1e3, "m": 1e6}[m[2]])
+    if not any(total.values()):
+        sys.exit("Give at least one non-zero token value, e.g. output=12.3k")
+    total.update(turns=None, sessions=[], models=[], source="entered by hand" + (f" ({note})" if note else ""))
+    return total
+
+
+def write_md(batch, d):
+    """RUN LOG.md into qa/ and into the deliver folder (the --deliver path, or an output folder outside the repo)."""
+    md = summary_md(d)
+    targets = [ROOT / "batches" / batch / "qa" / "RUN LOG.md"]
+    deliver = d.get("deliver")
+    if not deliver and d.get("output_dir"):
+        od = pathlib.Path(d["output_dir"]).resolve()
+        if not od.is_relative_to((ROOT / "batches").resolve()):
+            deliver = str(od)
+    if deliver:
+        targets.append(pathlib.Path(deliver) / "RUN LOG.md")
+    written = []
+    for p in targets:
+        if p.parent.is_dir():
+            p.write_text(md, encoding="utf-8"); written.append(p)
+    return md, written
 
 
 def cmd_start(a):
@@ -146,6 +188,9 @@ def cmd_start(a):
          "raw_seconds": round(sum(r["seconds"] or 0 for r in raws), 1), "steps": []}
     save(a.batch, d)
     print(f"run log started: {a.batch} ({a.workflow}), {d['raws']} raw clips, {fmt_s(d['raw_seconds'])} of footage")
+    if not session_dirs():
+        print("WARN: no Claude Code session log for this repo on this PC, so tokens will not be counted automatically. "
+              "Run the batch in Claude Code here, or add them at the end: run_log.py end ... --tokens output=... input=...")
 
 
 def cmd_time(a):
@@ -175,16 +220,26 @@ def cmd_end(a):
     d["outputs"] = outs
     d["videos"] = sum(o["kind"] == "video" for o in outs)
     d["images"] = sum(o["kind"] == "image" for o in outs)
-    d["tokens"] = tokens(t0, t1, [pathlib.Path(a.session)] if a.session else None)
-    save(a.batch, d)
-    md = summary_md(d)
-    targets = [ROOT / "batches" / a.batch / "qa" / "RUN LOG.md"]
+    d["tokens"] = parse_tokens(a.tokens, a.tokens_note) if a.tokens else \
+        tokens(t0, t1, [pathlib.Path(a.session)] if a.session else None)
     if a.deliver:
-        targets.append(pathlib.Path(a.deliver) / "RUN LOG.md")
-    for p in targets:
-        if p.parent.is_dir():
-            p.write_text(md, encoding="utf-8")
+        d["deliver"] = a.deliver
+    save(a.batch, d)
+    md, _ = write_md(a.batch, d)
     print(md)
+
+
+def cmd_tokens(a):
+    d = load(a.batch)
+    if "end" not in d:
+        sys.exit(f"Run 'run_log.py end {a.batch}' first (or pass --tokens to end).")
+    d["tokens"] = parse_tokens(a.pairs, a.note)
+    save(a.batch, d)
+    _, written = write_md(a.batch, d)
+    tk = d["tokens"]
+    print(f"tokens set for {a.batch}: output {tk['output_tokens']:,}, input {tk['input_tokens']:,}, "
+          f"cache write {tk['cache_creation_input_tokens']:,}, cache read {tk['cache_read_input_tokens']:,}; "
+          f"RUN LOG.md rewritten in {len(written)} place(s)")
 
 
 def per_raw(d):
@@ -205,7 +260,9 @@ def summary_md(d):
     lines += [f"| {s['label']} | {fmt_s(s['seconds'])} | {s['exit']} |" for s in d["steps"]] or ["| (none timed) | | |"]
     lines += ["", "## Claude tokens", ""]
     if tk:
-        lines += [f"- Turns: {tk['turns']} | sessions: {len(tk['sessions'])} | models: {', '.join(tk['models'])}",
+        if tk.get("turns") is not None:
+            lines.append(f"- Turns: {tk['turns']} | sessions: {len(tk['sessions'])} | models: {', '.join(tk['models'])}")
+        lines += [f"- Source: {tk.get('source', AUTO_SOURCE)}",
                   f"- Output: {tk['output_tokens']:,} | fresh input: {tk['input_tokens']:,}",
                   f"- Cache write: {tk['cache_creation_input_tokens']:,} | cache read: {tk['cache_read_input_tokens']:,}"]
         if n_out:
@@ -213,7 +270,9 @@ def summary_md(d):
             lines.append(f"- Per output file: ~{per:,.0f} output+input+cache-write, "
                          f"~{tk['cache_read_input_tokens'] / n_out:,.0f} cache read")
     else:
-        lines.append("- Not recorded (run outside Claude Code, e.g. the chat app).")
+        lines.append("- Not recorded: no Claude Code session log for this repo in the run window (chat app, another PC or a "
+                     f"remote session). Add it: `python scripts/run_log.py tokens {d['batch']} output=... input=... "
+                     "cache_read=... cache_write=...`")
     lines += ["", "## Outputs", "", "| File | Length | MB |", "|---|---|---|"]
     lines += [f"| {o['file']} | {o.get('seconds') or ''}{'s' if o.get('seconds') else ''} | {o['mb']} |"
               for o in d.get("outputs", [])]
@@ -242,18 +301,23 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
     s = sub.add_parser("start"); s.add_argument("batch")
-    s.add_argument("--workflow", required=True, choices=["reels", "masterclass", "static", "doctor-reel"])
+    s.add_argument("--workflow", required=True, choices=WORKFLOWS)
     s.add_argument("--raw", help="raw footage folder (default batches/<batch>/raw)")
     t = sub.add_parser("time"); t.add_argument("batch"); t.add_argument("label")
     t.add_argument("command", nargs=argparse.REMAINDER)
     e = sub.add_parser("end"); e.add_argument("batch")
     e.add_argument("--deliver", help="deliver folder to scan and write RUN LOG.md into")
     e.add_argument("--session", help="a specific Claude Code session .jsonl to count")
+    e.add_argument("--tokens", nargs="+", metavar="KEY=N", help="enter totals by hand: output= input= cache_read= cache_write=")
+    e.add_argument("--tokens-note", default="", help="where the hand-entered numbers came from")
+    k = sub.add_parser("tokens", help="set hand-entered token totals after 'end' and rewrite RUN LOG.md")
+    k.add_argument("batch"); k.add_argument("pairs", nargs="+", metavar="KEY=N")
+    k.add_argument("--note", default="", help="where the numbers came from, e.g. 'Claude app usage screen'")
     sub.add_parser("report")
     a = ap.parse_args()
     if a.cmd == "time" and a.command and a.command[0] == "--":
         a.command = a.command[1:]
-    {"start": cmd_start, "time": cmd_time, "end": cmd_end, "report": cmd_report}[a.cmd](a)
+    {"start": cmd_start, "time": cmd_time, "end": cmd_end, "tokens": cmd_tokens, "report": cmd_report}[a.cmd](a)
 
 
 if __name__ == "__main__":
