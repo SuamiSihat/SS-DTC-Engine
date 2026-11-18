@@ -12,6 +12,9 @@ For the person installing the engine on a PC. Everyone else can skip this docume
 7. Self-test: `python setup/check_env.py` and `python scripts/check_sync.py --selftest`
 8. Stock b-roll (optional): create free API keys at pexels.com/api and pixabay.com/api/docs, put them in `config.env` (`PEXELS_API_KEY`, `PIXABAY_API_KEY`) with `BROLL_LIBRARY` (NAS folder), then run `python scripts/stock_fetch.py fetch-model` (YuNet face model, newest default for OpenCV 5) and `python scripts/stock_fetch.py selftest`. Keys stay in `config.env`, which git ignores.
 9. Concept photos (optional, `scripts/render_concepts.py`): put a Bedrock API key in `config.env` as `AWS_BEARER_TOKEN_BEDROCK` (and `AWS_REGION`, default `us-east-1`), or `pip install boto3` and set `AWS_PROFILE` instead. Test without a key using `--engine mock`.
+10. Model caches off the system drive (recommended when C: is small): rembg cut-out models (~0.2-1 GB each) and the whisper models (0.5-1.5 GB each) download to the user profile on C: by default. Point them at a data drive once per user, then reopen the terminal and Claude Code:
+    `setx REMBG_HOME "E:\Cache\rembg"` and `setx HF_HOME "E:\Cache\huggingface"`
+    Move existing downloads instead of downloading again: `%USERPROFILE%\.rembg` to `E:\Cache\rembg`, `%USERPROFILE%\.cache\huggingface` to `E:\Cache\huggingface`. Keep renders and TEMP on the data drive too.
 
 ## Running a batch
 1. Drop raw clips on the NAS `incoming/<batch-name>/`.
