@@ -9,6 +9,12 @@ FONT_DIRS = [pathlib.Path(os.path.expandvars(r"%LOCALAPPDATA%\Microsoft\Windows\
 NAVY = (2, 32, 87); CNAVY = (15, 76, 117); GOLD = (244, 162, 97); WHITE = (255, 255, 255); SOFT = (214, 228, 243)
 LOGO_DARK = ROOT / "brands" / "ssclinic" / "design-system" / "logos" / "logo_ssc_primary_dark.png"
 
+
+def set_accent(hex_color):
+    """Per-batch accent override (spec "accent"), replaces the brand gold everywhere in these graphics."""
+    global GOLD
+    h = hex_color.lstrip("#"); GOLD = tuple(int(h[i:i + 2], 16) for i in (0, 2, 4))
+
 # layout per format: safe area, panel box, video box, caption band
 LAYOUT = {
     "16x9": {"size": (1920, 1080), "safe": (60, 60, 1860, 1020), "panel": (60, 60), "video": (0, 0, 1920, 1080),
@@ -50,7 +56,8 @@ def fit(text, name, size, width, max_lines=1, min_size=24):
     return f, wrap(text, f, width)
 
 
-def icon(d, kind, box, col=GOLD):
+def icon(d, kind, box, col=None):
+    col = col or GOLD
     x0, y0, x1, y1 = box; w, h = x1 - x0, y1 - y0; cx, cy = x0 + w / 2, y0 + h / 2; lw = max(6, int(w * 0.11))
     if kind == "straight":
         d.line((cx, y1 - h * .1, cx, y0 + h * .38), fill=col, width=lw)
@@ -198,8 +205,7 @@ def endcard(fmt, ec, still, out):
     cw = (sx1 - sx0) if big else 860; x = sx0 if big else 110
     lgh = 96 if big else 104
     lg = Image.open(LOGO_DARK).convert("RGBA"); lg = lg.resize((int(lg.width * lgh / lg.height), lgh), Image.LANCZOS)
-    y = (sy0 + 20) if big else 190
-    im.alpha_composite(lg, ((W - lg.width) // 2 if big else x, y)); y += lgh + (50 if big else 46)
+    y0 = (sy0 + 20) if big else 190
     # clinic-door still: right half on 16:9, below the safe area on 9:16 (decorative)
     ph = Image.open(still).convert("RGB")
     pw_, ph_ = (860, 484) if not big else (840, 472)
@@ -211,14 +217,20 @@ def endcard(fmt, ec, still, out):
             (ec["address"], "Poppins-Medium.ttf", 36 if big else 36, WHITE, 4), (ec["parking"], "Poppins-Regular.ttf", 32, SOFT, 3)]
     if ec.get("hours"):
         rows.append((ec["hours"], "Poppins-Regular.ttf", 30, SOFT, 2))
+    fl = font("Poppins-Medium.ttf", 30 if big else 32); fp = font("Poppins-Bold.ttf", 64 if big else 70); bh = 190
+    if not big:  # lift the column so the phone block below it never has to be clamped over the last row
+        fitted = [fit(text, fn, size, cw, max_lines=ml, min_size=24) for text, fn, size, _, ml in rows]
+        col_h = lgh + 46 + sum(int(f.size * 1.3) * len(ls) + 22 for f, ls in fitted) + 16 + bh
+        y0 = max(sy0, min(y0, sy1 - col_h))
+    y = y0
+    im.alpha_composite(lg, ((W - lg.width) // 2 if big else x, y)); y += lgh + (50 if big else 46)
     for text, fn, size, col, ml in rows:
         f, lines = fit(text, fn, size, cw, max_lines=ml, min_size=24)
         for l in lines:
             d.text(((W - f.getlength(l)) / 2 if big else x, y), l, font=f, fill=col); y += int(f.size * 1.3)
         y += 22
     # phone block on a clinical navy panel
-    fl = font("Poppins-Medium.ttf", 30 if big else 32); fp = font("Poppins-Bold.ttf", 64 if big else 70)
-    bw = int(max(fl.getlength(ec["phone_label"]), fp.getlength(ec["phone"]) + 110)) + 70; bh = 190
+    bw = int(max(fl.getlength(ec["phone_label"]), fp.getlength(ec["phone"]) + 110)) + 70
     bx = (W - bw) // 2 if big else x; by = max(y + 10, sy1 - bh - 10) if big else y + 16
     by = min(by, sy1 - bh)
     d.rounded_rectangle((bx, by, bx + bw, by + bh), radius=28, fill=CNAVY + (255,))

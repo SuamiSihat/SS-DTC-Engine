@@ -8,7 +8,7 @@ if [ "$(uname)" = "Darwin" ]; then
 else
   sudo apt-get update && sudo apt-get install -y ffmpeg nodejs npm python3 python3-pip git
 fi
-python3 -m pip install --user numpy scipy opencv-python openai-whisper "rembg[cpu]"
+python3 -m pip install --user numpy scipy opencv-python openai-whisper "rembg[cpu]" azure-cognitiveservices-speech
 [ -f config.env ] || cp config.example.env config.env
 echo "Install Poppins font system-wide (brands/<slug>/ or the Design System fonts)."
 python3 scripts/install_skills.py

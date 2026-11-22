@@ -53,13 +53,15 @@ def render_format(fmt, spec, bd, stab, items, end, chunks_fn):
         else:
             g.fc.append(chain + "[v0]")
         g.cur = "v0"
-        if it.get("ring"):
+        if it.get("ring") and fmt in it.get("ring_fmts", ("16x9", "9x16")):
             rx, ry, rr = it["ring"]; rp = wd / f"ring_{i:02d}.png"; s = G.ring(rp, int(rr * sc))
             x, y = vx + rx * sc - s / 2, vy + ry * sc - s / 2
             g.overlay(rp, x, y, (d - it["freeze"], d))
             ovl.append({"name": rp.name, "x": int(x), "y": int(y), "w": s, "h": s, "start": t0 + d - it["freeze"], "end": t0 + d})
         pp = wd / f"panel_{i:02d}.png"; pw, ph = G.panel(fmt, dict(it, nsteps=ns), pp); px, py = L["panel"]
-        key = (it.get("step"), it.get("icon"), it["head"], it.get("sub"))
+        if fmt == "16x9" and it.get("panel_y16"):  # move the panel off a landmark sign at the top of the frame
+            py = it["panel_y16"]
+        key = (it.get("step"), it.get("icon"), it["head"], it.get("sub"), py)
         g.overlay(pp, px, py, fade=key != prev); prev = key
         ovl.append({"name": pp.name, "x": px, "y": py, "w": pw, "h": ph, "start": t0, "end": t0 + d})
         if fmt == "16x9":
@@ -93,9 +95,21 @@ def render_format(fmt, spec, bd, stab, items, end, chunks_fn):
     return vid, layout
 
 
-def build_audio(spec, bd, items, end, total):
-    """Ambience = source audio at 1x from each shot's in-point (keeps the place sound true to the picture), plus VO."""
-    out = bd / "work" / "mix.m4a"; gain = spec.get("ambience_gain", 0.35)
+def lufs(path, cwd=None):
+    """Integrated loudness (EBU R128) of an audio file."""
+    r = subprocess.run(["ffmpeg", "-hide_banner", "-nostats", "-i", str(path), "-af", "ebur128=framelog=quiet", "-f", "null", "-"],
+                       cwd=cwd, capture_output=True, text=True, encoding="utf-8", errors="replace")
+    vals = [l.split("I:")[1].split("LUFS")[0] for l in r.stderr.splitlines() if l.strip().startswith("I:")]
+    if not vals:
+        print("FAIL: no loudness for", path); sys.exit(1)
+    return float(vals[-1])
+
+
+def build_audio(spec, bd, items, end, total, music=False, out_name="mix.m4a", extra=None):
+    """Ambience = source audio at 1x from each shot's in-point (keeps the place sound true to the picture), plus VO.
+    music=True adds spec["music"] as a bed set relative to the VO loudness and ducked by the VO bus (sidechain).
+    extra = an optional wav (e.g. an SFX bus) mixed in as is, before loudness normalisation."""
+    out = bd / "work" / out_name; gain = spec.get("ambience_gain", 0.35)
     # each segment is cut with input -ss, the same way as the picture (and the sync checker); this WhatsApp AAC
     # lands 1-3 frames (21-62 ms) apart between -ss seeking and a continuous decode + atrim
     ad = bd / "work" / "amb"; ad.mkdir(exist_ok=True)
@@ -120,7 +134,23 @@ def build_audio(spec, bd, items, end, total):
     fc.append("[0:a]" + "".join(vos) + f"amix=inputs={len(vos) + 1}:normalize=0:duration=first[vo]")
     vob = bd / "work" / "vo_bus.wav"
     run(cmd + ["-filter_complex", ";".join(fc), "-map", "[vo]", "-c:a", "pcm_s16le", vob], cwd=bd)
-    run(["ffmpeg", "-v", "error", "-y", "-i", amb, "-i", vob, "-filter_complex",
-         "[0:a][1:a]amix=inputs=2:normalize=0:duration=first,loudnorm=I=-16:TP=-1.5:LRA=11,aresample=48000[aout]",
-         "-map", "[aout]", "-t", f"{total:.3f}", "-c:a", "aac", "-b:a", "160k", out], cwd=bd)
+    norm = "loudnorm=I=-16:TP=-1.5:LRA=11,aresample=48000[aout]"
+    ex = ["-i", str(extra)] if extra else []
+    if not music:
+        run(["ffmpeg", "-v", "error", "-y", "-i", amb, "-i", vob] + ex + ["-filter_complex",
+             ("[0:a][1:a][2:a]amix=inputs=3" if extra else "[0:a][1:a]amix=inputs=2") + ":normalize=0:duration=first," + norm,
+             "-map", "[aout]", "-t", f"{total:.3f}", "-c:a", "aac", "-b:a", "160k", out], cwd=bd)
+        return out
+    m = spec["music"]; src = (bd / m["path"]).resolve(); st = m.get("start", 0.0)
+    # static gain: music sits rel_db under the VO before ducking (dynamics of the track untouched)
+    mg = lufs(vob) + m.get("rel_db", -9.0) - lufs(src)
+    fo = m.get("fade_out", 3.0)
+    fc = (f"[2:a]atrim=0:{total:.3f},asetpts=PTS-STARTPTS,aformat=sample_rates=48000:channel_layouts=stereo,volume={mg:.2f}dB,"
+          f"afade=t=in:d={m.get('fade_in', 1.0)},afade=t=out:st={total - fo:.3f}:d={fo}[mus];"
+          "[1:a]asplit=2[vo][sc];"
+          f"[mus][sc]sidechaincompress=threshold={m.get('duck_threshold', 0.02)}:ratio={m.get('duck_ratio', 5)}:attack=15:release=450[mduck];"
+          "[0:a][vo][mduck]" + ("[3:a]amix=inputs=4" if extra else "amix=inputs=3") + ":normalize=0:duration=first," + norm)
+    run(["ffmpeg", "-v", "error", "-y", "-i", amb, "-i", vob, "-stream_loop", "-1", "-ss", f"{st:.3f}", "-i", src] + ex +
+        ["-filter_complex", fc, "-map", "[aout]", "-t", f"{total:.3f}", "-c:a", "aac", "-b:a", "160k", out], cwd=bd)
+    print(f"music bed: {src.name} from {st:.1f}s, {mg:+.1f} dB, ducked under VO")
     return out

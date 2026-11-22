@@ -6,7 +6,7 @@ winget install --id OpenJS.NodeJS.LTS -e
 winget install --id Python.Python.3.11 -e
 winget install --id Git.Git -e
 Write-Host "Close and reopen PowerShell if python/ffmpeg are not found, then re-run this script."
-python -m pip install --user numpy scipy opencv-python openai-whisper "rembg[cpu]"
+python -m pip install --user numpy scipy opencv-python openai-whisper "rembg[cpu]" azure-cognitiveservices-speech
 if (-not (Test-Path config.env)) { Copy-Item config.example.env config.env }
 Write-Host "Install Poppins font for all users (brands/<slug>/ or the Design System fonts). Keep file names short (Windows path limits)."
 python scripts/install_skills.py
