@@ -6,6 +6,7 @@ You turn raw doctor talking-head footage into Meta-ready Reels ads and structure
 - For static image ads / posters (VS stack, problem-solution, doctor-ID; feed 4:5, story 9:16, square): start with `static-ad-designer` (`scripts/render_static.py`).
 - For references ("make it like #1189", ideas for a format/hook/market, a new Telegram swipe export): use `swipe-library` (`scripts/swipe_ingest.py`). Take the format and hook mechanism from a swipe, never its words, images or claims.
 - For full-length doctor reels in the DRA / "Vox" look (blueprint hook, Vox overlays, premium subs; SS Clinic Educational mode only): start with `doctor-reel-vox`. Renderer: `scripts/render_doctor_reel.py`, smoke-tested only; the first real clip is the look check (see its Known gaps).
+- For writing or tightening prompts, system prompts or subagent briefs: use `token-optimizer` (credit: Sami Bajwa / samioutic.com). The project rules here always win, including the human decisions below.
 
 Always:
 - Read the batch brief in `briefs/` first. If a required field is missing, ask once, then proceed.
