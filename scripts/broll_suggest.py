@@ -15,6 +15,7 @@ RULES = [  # (type, keywords, suggestion)
     ("steps", r"\b(langkah|cara|pertama|kedua|ketiga|kemudian|mula-mula|step|first|then)\b", "Animated step diagram"),
     ("concept", r"\b(saraf|darah|hormon|tekanan|stres|stress|tidur|aliran|otot|tenaga|nerve|blood|hormone|sleep)\b", "Abstract concept animation (scripts/scenes.py); no anatomy imagery"),
     ("metaphor", r"\b(seperti|ibarat|umpama|bagaikan)\b", "Metaphor visual: fruit metaphors only"),
+    ("rehook", r"\b(tapi|tetapi|namun|tahukah|sebenarnya|hakikatnya|yang ramai tak tahu|yang menariknya|bagaimana jika|persoalannya|ada satu)\b", "Rehook candidate: mid-video attention reset (see skills/rehook)"),
 ]
 
 def sentences(words):

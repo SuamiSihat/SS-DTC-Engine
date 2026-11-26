@@ -3,10 +3,11 @@ Masters are 23-30 s. Example structure from the Dr MIT Ring batch (DAM1):
 - 0 s hook headline over the doctor holding the product
 - ~4 s question/claim tag
 - ~8 s tight crop
-- ~12 s wide crop
-- ~16 s claim chips
-- ~20 s product zoom
-- ~24 s instruction chip
+- ~12 s **REHOOK** — framing switch + caption accent (see `rehook` skill)
+- ~14 s wide crop continuing with new point
+- ~18 s claim chips
+- ~22 s product zoom
+- ~25 s instruction chip
 - ~27 s offer card with prices + units sold
 
 Hook versions (1-3 s opener before the master body):

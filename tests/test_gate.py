@@ -17,10 +17,12 @@ def gate(brand, lines, *extra):
         r = subprocess.run([sys.executable, str(ROOT / "scripts" / "check_brand.py"), "--brand", brand,
                             "--texts", str(tf), "--json", *extra],
                            capture_output=True, text=True, encoding="utf-8")
-    return r.returncode, json.loads(r.stdout)
+    data = json.loads(r.stdout)
+    return r.returncode, data
 
 
-def levels(findings, level):
+def levels(data, level):
+    findings = data.get("findings", data) if isinstance(data, dict) else data
     return [f["msg"] for f in findings if f["level"] == level]
 
 
@@ -79,6 +81,28 @@ class PolicyRules(unittest.TestCase):
         for rule in policy_rules.RULES:
             self.assertEqual(len(rule), 4, rule)
             self.assertIn(rule[1], ("all", "service", "product"), rule)
+
+
+class RiskTier(unittest.TestCase):
+    def test_risk_flag_outputs_tier_only(self):
+        r = subprocess.run([sys.executable, str(ROOT / "scripts" / "check_brand.py"),
+                            "--brand", "drmitring", "--risk"],
+                           capture_output=True, text=True, encoding="utf-8")
+        self.assertIn(r.stdout.strip(), ("low", "medium", "high", "block"))
+
+    def test_json_includes_risk_field(self):
+        code, data = gate("drmitring", ["Jumpa doktor"])
+        self.assertIn("risk", data)
+        self.assertIn(data["risk"], ("low", "medium", "high", "block"))
+        self.assertIsInstance(data["risk_reasons"], list)
+
+    def test_service_with_doctor_is_high(self):
+        _, data = gate("ssclinic", ["Test line"], "--doctor", "Dr Rak", "--no-policy")
+        self.assertEqual(data["risk"], "high")
+
+    def test_banned_term_is_block(self):
+        _, data = gate("drmitring", ["pancut test"])
+        self.assertEqual(data["risk"], "block")
 
 
 if __name__ == "__main__":

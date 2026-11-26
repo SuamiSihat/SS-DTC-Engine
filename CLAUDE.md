@@ -30,6 +30,13 @@ Token budget (every turn re-reads the whole session, so context size x turns is 
 - Plan once, render once: write the full spec and hook notes, get the person's approval, then render all outputs in one script run. No per-clip render calls, no re-renders for wording that could have been approved first.
 - On a QA fail, read only the failing lines of the report, fix, and re-run the check script.
 - Use a subagent for self-contained steps that need a lot of reading (transcript review, sync-qa across many files, swipe lookups) so only its short result enters this session.
+- Five batch agents in `.claude/agents/` can run steps in parallel:
+  1. **creative-director** — analyse brief + footage, propose hooks/rehooks/funnels per clip
+  2. **scriptwriter** — review transcripts, write headlines/hooks/rehooks, tag b-roll, check brand
+  3. **production-designer** — verify visuals, safe zones, brand colours before rendering
+  4. **post-production** — run render_batch.py, sound_design.py, verify outputs
+  5. **qa-director** — run check_brand, check_sync, check_layout on every file; produce the final QA report
+  Typical parallel opportunities: creative-director while transcribing; scriptwriter across clips; qa-director across rendered files.
 
 Human decisions (do not decide alone): doctor consent and claims sign-off for brands other than DMR (brand owner), blurring customer names,
 risky hook wording, final price confirmation, sign-off before launch, SS Clinic content mode and KKLIU approvals,

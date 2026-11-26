@@ -5,10 +5,10 @@ A shared workspace that helps the Creative Department turn raw talking-head foot
 ## What it does
 
 Give the engine a set of raw clips and a short brief. It supports two primary workflows:
-- **DTC Reels (`dtc-reels-editor`)**: Removes pauses and filler, adds captions, headlines, offer cards and backgrounds, and produces several opening hooks for each 9:16 vertical video (`1080x1920`).
+- **DTC Reels (`dtc-reels-editor`)**: Removes pauses and filler, adds captions, headlines, offer cards and backgrounds, and produces several opening hooks for each 9:16 vertical video (`1080x1920`). Hooks include mid-video **rehooks** — attention resets that prevent viewer drop-off (see `skills/rehook`).
 - **Masterclass Series (`masterclass-editor`)**: Turns doctor or presenter lecture footage into a **5-episode educational series (`EP01`–`EP05`)** plus a **mandatory Series Trailer** (containing a highlight clip from every episode), rendered in both **16:9 (`1920x1080`)** and **9:16 (`1080x1920`)** with episode/chapter title cards, split-screen slide/diagram callouts, and numbered key-takeaway summary cards.
 
-Every video is checked by automated QA gates and reviewed by a person before it is used.
+Every video is checked by automated QA gates (including a **risk tier classification**: low / medium / high / block) and reviewed by a person before it is used.
 
 In our first trial (Dr. MIT Ring, October 2026), 10 raw clips became 40 ready-to-review ads in under four hours.
 
@@ -30,9 +30,21 @@ Each brand has its own rules for colours, logos, tone of voice and wording that 
 
 1. **Prepare the footage.** Place the raw clips in a new batch folder on the NAS.
 2. **Write the brief.** Copy `briefs/_TEMPLATE.md`, fill in the brand, the topic of each clip, the doctor appearing (if any) and the offer (or 5-episode chapter structure for Masterclass series).
-3. **Run the batch.** Ask the engine to run it. The brand rules are checked first, and anything that breaks them is flagged before editing begins.
+3. **Run the batch.** Ask the engine to run it. Five specialist agents can work in parallel (see below). The brand rules are checked first, and anything that breaks them is flagged before editing begins.
 4. **Review.** A team member watches every video with sound, checks wording, doctor details, prices and sync, and approves or requests changes.
 5. **Deliver.** Approved videos are organised into ad-set or Masterclass series folders on the NAS together with an index sheet.
+
+### Batch agents
+
+Complex batches can run five specialist agents in parallel (defined in `.claude/agents/`):
+
+| Agent | Role | Runs when |
+| --- | --- | --- |
+| **Creative Director** | Analyses brief + footage, proposes hooks, rehooks and funnel stages | Start of batch |
+| **Scriptwriter** | Reviews transcripts, writes headlines/hooks/rehooks, tags b-roll | After transcription |
+| **Production Designer** | Verifies visuals, safe zones and brand colours before rendering | After spec is drafted |
+| **Post-production** | Runs render and sound-design scripts, verifies outputs | After spec is final |
+| **QA Director** | Runs brand gate, sync-qa and layout checks; produces the QA report | After rendering |
 
 ## Responsibilities that stay with people
 
@@ -51,7 +63,9 @@ The engine speeds up editing. It does not replace judgement. People remain respo
 | --- | --- |
 | `briefs/` | Brief template and completed briefs |
 | `brands/` | Rules for each brand (`brand.json`, `README.md`, `look.json`, `prices.json`: colours, tone, wording to avoid, doctor policy, per-product video rules, live websites) |
-| `skills/` | The engine's editing instructions (`dtc-reels-editor`, `masterclass-editor`, `dtc-broll`, `brand-rules`, `hook-backgrounds`, `sync-qa`, `ad-packaging`) |
+| `skills/` | The engine's editing instructions (22 skills including `dtc-reels-editor`, `masterclass-editor`, `rehook`, `dtc-broll`, `brand-rules`, `hook-backgrounds`, `sync-qa`, `ad-packaging`) |
+| `scripts/` | Python tools: `render_batch.py`, `check_brand.py` (with risk tiers), `check_sync.py`, `check_layout.py`, `sound_design.py`, `broll_suggest.py`, `run_log.py` (with KPI tracking), `variants.py` and others |
+| `.claude/agents/` | Five specialist batch agents (creative-director, scriptwriter, production-designer, post-production, qa-director) |
 | `lessons.md` | Notes from past batches so mistakes are not repeated |
 | `docs/SETUP.md` | Installation guide for the person setting up a PC |
 | `CLAUDE.md` | Standing instructions the engine follows in every session |

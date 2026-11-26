@@ -20,6 +20,16 @@
       "segments": [[s, e], ...]},               // optional: this variant's source ranges (default: the clip's segments)
      {"id": "BOFU-C-clean", "funnel": "BOFU", "hook": "C", "style": "clean", "product": "care_cream",
       "price_ref": "Menss Care Cream - Sologrip (1 Unit)"}   // BOFU: product name from prices.json, never a typed price
+   ],
+   "structure": [                                // optional: typed narrative segments (new; replaces flat segments when present)
+     {"sequence": 1, "type": "hook",        "start": 0.0,  "end": 5.2,  "line": "...", "audio_cue": "impact_soft"},
+     {"sequence": 2, "type": "explanation", "start": 5.2,  "end": 11.4, "line": "..."},
+     {"sequence": 3, "type": "rehook",      "start": 11.4, "end": 13.1, "line": "...", "technique": "curiosity"},
+     {"sequence": 4, "type": "explanation", "start": 13.1, "end": 28.5, "line": "..."},
+     {"sequence": 5, "type": "cta",         "start": 28.5, "end": 30.0, "line": "..."}
+   ],
+   "rehooks": [                                  // shorthand: rehook timestamps only (use this OR structure, not both)
+     {"t": 11.4, "technique": "curiosity", "line": "Tetapi ada satu punca yang ramai tidak sedar."}
    ]
  }]
 }
@@ -29,3 +39,8 @@ Versions: A master, B cold open (best line first), C topic visual (first segment
 Then `python scripts/check_sync.py --timeline batches/<batch>/renders/<name>.timeline.json` for every file.
 
 SS Clinic end card: in Educational mode the end card carries a neutral line and an empty CTA. Never "Kami Check & Rawat" / "Datang ke SS Clinic" on a doctor video (decision 2026-10-21). KOL ads use the wording approved in the KKLIU application.
+
+Rehook effects: when a clip has `rehooks` or `structure` entries of type `rehook`, `render_batch.py` automatically
+inserts a 0.35 s freeze-frame micro-pause before the rehook line, toggles framing (wide↔tight), accents the
+caption line in azure, and marks the rehook in `*.timeline.json` for `sound_design.py` SFX placement.
+Old specs without these fields render identically to before.

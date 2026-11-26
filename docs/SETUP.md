@@ -19,7 +19,7 @@ For the person installing the engine on a PC. Everyone else can skip this docume
 ## Running a batch
 1. Drop raw clips on the NAS `incoming/<batch-name>/`.
 2. Copy `briefs/_TEMPLATE.md` to `briefs/<batch-name>.md` and fill it in (one message of full direction).
-3. Run the brand gate: `python scripts/check_brand.py --brand <slug> --texts <lines.txt> --doctor "<doctor name>"`. Fix any BLOCK.
+3. Run the brand gate: `python scripts/check_brand.py --brand <slug> --texts <lines.txt> --doctor "<doctor name>"`. Fix any BLOCK. Use `--risk` for the tier only (block/high/medium/low) or `--json` for structured output.
 4. Open this folder in Claude Code and prompt:
    `Run batch <batch-name> from briefs/<batch-name>.md. Send me all files when done.`
 5. Claude edits, renders and runs sync-qa. A person watches every final WITH SOUND and signs off.
@@ -28,10 +28,11 @@ For the person installing the engine on a PC. Everyone else can skip this docume
 ## Running a batch (technical steps)
 1. Drop raw clips on the NAS `incoming/<batch-name>/`.
 2. Copy `briefs/_TEMPLATE.md` to `briefs/<batch-name>.md` and fill it in.
-3. Run the brand check: `python scripts/check_brand.py --brand <slug> --texts <lines.txt> --doctor "<doctor name>"`. Fix any BLOCK.
+3. Run the brand check: `python scripts/check_brand.py --brand <slug> --texts <lines.txt> --doctor "<doctor name>"`. Fix any BLOCK. The `--risk` flag prints only the tier (block/high/medium/low).
 4. Open this folder in Claude Code and prompt: `Run batch <batch-name> from briefs/<batch-name>.md. Send me all files when done.`
 5. A person reviews every final video with sound and signs off.
 6. Approved ad sets are copied to the NAS `deliver/` folder.
+7. After a batch goes live, record performance: `python scripts/run_log.py kpi <batch> retention_3s=85 completion_rate=42 --platform tiktok --note "first 7 days"`
 
 ## Maintenance rules
 - Footage and renders never go in git (see `.gitignore`).

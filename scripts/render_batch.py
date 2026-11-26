@@ -35,6 +35,8 @@ def make_card_mask(path):
     ImageDraw.Draw(m).rounded_rectangle([0, 0, CARD_W - 1, CARD_H - 1], radius=CARD_R, fill=255)
     m.save(path)
 NAVY, CNAVY, GOLD, AZURE, WHITE = (2, 32, 87), (15, 76, 117), (244, 162, 97), (33, 161, 247), (255, 255, 255)
+REHOOK_PAUSE = 0.35   # seconds of freeze-frame micro-pause before a rehook line
+REHOOK_COL = AZURE    # caption accent colour for rehook lines (all words, not just keywords)
 FONT_DIRS = [r"C:\Windows\Fonts", os.path.expandvars(r"%LOCALAPPDATA%\Microsoft\Windows\Fonts"), "/usr/share/fonts/truetype/poppins"]
 
 def font(name, size):
@@ -46,6 +48,21 @@ def font(name, size):
 
 def rgb_to_ass(c, alpha=0):
     return "&H%02X%02X%02X%02X" % (alpha, c[2], c[1], c[0])
+
+def find_rehooks(clip):
+    """Extract rehook timestamps from 'rehooks' list or 'structure' entries.
+    Returns list of {'t': float, 'technique': str, 'line': str}.
+    Old specs without rehooks return [] (fully backward compatible)."""
+    out = []
+    for rh in clip.get("rehooks", []):
+        out.append({"t": rh["t"], "technique": rh.get("technique", ""), "line": rh.get("line", "")})
+    for entry in clip.get("structure", []):
+        if entry.get("type") == "rehook" and "start" in entry:
+            t = entry["start"]
+            if not any(abs(r["t"] - t) < 0.1 for r in out):
+                out.append({"t": t, "technique": entry.get("technique", ""),
+                            "line": entry.get("dialogue", entry.get("line", ""))})
+    return out
 
 # ---------- overlay images ----------
 def wrap(draw, words, fnt, maxw):
@@ -191,12 +208,16 @@ Format: Layer,Start,End,Style,Name,MarginL,MarginR,MarginV,Effect,Text
         return f"{h}:{m:02d}:{s:05.2f}"
     lines = []
     for gi, g in enumerate(groups):
+        is_rehook_group = any(x.get("rehook") for x in g)
         for i, w in enumerate(g):
             start = w["s"] if i else g[0]["s"]
             end = g[i + 1]["s"] if i + 1 < len(g) else min(g[-1]["e"] + 0.12, groups[gi + 1][0]["s"] if gi + 1 < len(groups) else 1e9)
             txt = ""
             for j, x in enumerate(g):
-                col = rgb_to_ass(GOLD) if j == i else rgb_to_ass(WHITE)
+                if is_rehook_group:
+                    col = rgb_to_ass(WHITE) if j == i else rgb_to_ass(REHOOK_COL)
+                else:
+                    col = rgb_to_ass(GOLD) if j == i else rgb_to_ass(WHITE)
                 txt += "{\\c%s}%s " % (col, x["w"])
             lines.append(f"Dialogue: 0,{t(start)},{t(end)},Cap,,0,0,0,,{txt.strip()}")
     pathlib.Path(path).write_text(hdr + "\n".join(lines) + "\n", encoding="utf-8")
@@ -216,11 +237,14 @@ def render(name, items, overlays, ass_words, fixes, out_dir, work, fps, preview=
         idx = len(inputs)
         if it["type"] == "clip":
             nfr = max(1, round((it["e"] - it["s"]) * fps))
-            d = nfr / fps  # frame-aligned so audio and video segment lengths are identical
-            cmd += ["-ss", f"{it['s']:.3f}", "-t", f"{d + 0.25:.3f}", "-i", it["src"]]; inputs.append(1)
+            speech_d = nfr / fps  # frame-aligned speech duration
+            pad_fr = max(0, round(it.get("pad", 0) * fps))  # rehook freeze-frame
+            total_nfr = nfr + pad_fr
+            d = total_nfr / fps  # total segment duration in output
+            cmd += ["-ss", f"{it['s']:.3f}", "-t", f"{speech_d + 0.25:.3f}", "-i", it["src"]]; inputs.append(1)
             vi = idx
             lab = f"v{idx}"
-            base = f"[{vi}:v:0]setpts=PTS-STARTPTS,fps={fps},tpad=stop_mode=clone:stop=3,trim=end_frame={nfr},setpts=PTS-STARTPTS,format=yuv420p"
+            base = f"[{vi}:v:0]setpts=PTS-STARTPTS,fps={fps},tpad=stop_mode=clone:stop={3 + pad_fr},trim=end_frame={total_nfr},setpts=PTS-STARTPTS,format=yuv420p"
             if it["mode"] == "wide":
                 vf.append(f"{base},scale={W}:{H}:flags=lanczos,setsar=1[{lab}]")
             elif it["mode"] == "tight":
@@ -233,17 +257,17 @@ def render(name, items, overlays, ass_words, fixes, out_dir, work, fps, preview=
                 cmd += ["-loop", "1", "-framerate", str(fps), "-t", f"{d + 0.1:.3f}", "-i", str(CARD_MASK)]
                 inputs.append(1)
                 vf.append(f"{base},crop=iw:iw*{CARD_H}/{CARD_W}:0:ih*0.03,scale={CARD_W}:{CARD_H}:flags=lanczos,setsar=1,format=rgba[drp{idx}]")
-                vf.append(f"[{mk}:v]fps={fps},trim=end_frame={nfr},setpts=PTS-STARTPTS,format=gray[mk{idx}]")
+                vf.append(f"[{mk}:v]fps={fps},trim=end_frame={total_nfr},setpts=PTS-STARTPTS,format=gray[mk{idx}]")
                 vf.append(f"[drp{idx}][mk{idx}]alphamerge[dr{idx}]")
                 if LOOK:  # film look on the background only; the doctor stays clean
-                    vf.append(f"[{g}:v]fps={fps},trim=end_frame={nfr},setpts=PTS-STARTPTS,format=yuv420p,setsar=1[lk{idx}_in]")
+                    vf.append(f"[{g}:v]fps={fps},trim=end_frame={total_nfr},setpts=PTS-STARTPTS,format=yuv420p,setsar=1[lk{idx}_in]")
                     vf.append(look_filter.look_chain(LOOK, W, H, fps).replace("lk_", f"lk{idx}_"))
                     vf.append(f"[lk{idx}_out]null[bg{idx}]")
                 else:
-                    vf.append(f"[{g}:v]fps={fps},trim=end_frame={nfr},setpts=PTS-STARTPTS,format=yuv420p,setsar=1[bg{idx}]")
+                    vf.append(f"[{g}:v]fps={fps},trim=end_frame={total_nfr},setpts=PTS-STARTPTS,format=yuv420p,setsar=1[bg{idx}]")
                 vf.append(f"[bg{idx}][dr{idx}]overlay={CARD_X}:{CARD_Y}:shortest=1,format=yuv420p[{lab}]")
-            vf.append(f"[{vi}:a:0]asetpts=PTS-STARTPTS,aresample=48000,aformat=channel_layouts=stereo,apad=whole_dur={d:.5f},atrim=0:{d:.5f},asetpts=PTS-STARTPTS,afade=t=in:st=0:d=0.02,afade=t=out:st={max(0,d-0.04):.3f}:d=0.04[a{idx}]")
-            timeline.append({"out_start": round(t_out, 3), "dur": round(d, 3), "src": it["src"], "src_start": round(it["s"], 3), "mode": it["mode"]})
+            vf.append(f"[{vi}:a:0]asetpts=PTS-STARTPTS,aresample=48000,aformat=channel_layouts=stereo,apad=whole_dur={d:.5f},atrim=0:{d:.5f},asetpts=PTS-STARTPTS,afade=t=in:st=0:d=0.02,afade=t=out:st={max(0,speech_d-0.04):.3f}:d=0.04[a{idx}]")
+            timeline.append({"out_start": round(t_out, 3), "dur": round(d, 3), "src": it["src"], "src_start": round(it["s"], 3), "mode": it["mode"], "rehook": bool(it.get("rehook"))})
         else:
             d = round(it["dur"] * fps) / fps
             cmd += ["-loop", "1", "-framerate", str(fps), "-t", f"{d:.3f}", "-i", it["png"]]; inputs.append(1)
@@ -293,6 +317,9 @@ def render(name, items, overlays, ass_words, fixes, out_dir, work, fps, preview=
     hidden = [[o["start"], o["end"]] for o in ovl if o["kind"] == "quote"]
     layout = {"safe": [SAFE_L, SAFE_T, SAFE_R, SAFE_B], "overlays": ovl, "caption_band": [SAFE_L, CAP_BOTTOM - 130, SAFE_R, CAP_BOTTOM], "captions_hidden": hidden,
               "card": [CARD_X, CARD_Y, CARD_W, CARD_H]}
+    rehook_markers = [{"t": tl["out_start"]} for tl in timeline if tl.get("rehook")]
+    if rehook_markers:
+        layout["rehooks"] = rehook_markers
     (out_dir / f"{name}.timeline.json").write_text(json.dumps({"file": out.name, "total": round(total, 3), "items": timeline, "layout": layout}, indent=2), encoding="utf-8")
     return out, total
 
@@ -320,32 +347,49 @@ def main():
         words = load_words(batch / clip["words"] if not os.path.isabs(clip["words"]) else clip["words"])
         fixes = {k.lower(): v for k, v in clip.get("fixes", {}).items()}
         segs = [snap(words, s, e) for s, e in clip["segments"]]
+        rh = find_rehooks(clip)
         n = clip["n"]
-        def mk_items(first_mode_split=False, opener=None, body=None, endcard=None):
+        def mk_items(first_mode_split=False, opener=None, body=None, endcard=None, rehooks=None):
             items = []; ass = []; t = 0.0; modes = ["wide", "tight"]
+            rh_times = {r["t"] for r in (rehooks or [])}
+            body_given = body is not None
             body = body or [(s_, e_, modes[k % 2]) for k, (s_, e_) in enumerate(segs)]
+            # Ensure a framing toggle at rehook boundaries (auto-generated body only)
+            if rh_times and not body_given:
+                for i in range(1, len(body)):
+                    s_b, e_b, m_b = body[i]
+                    if any(abs(s_b - rt) < 0.15 for rt in rh_times):
+                        prev_mode = body[i - 1][2]
+                        if m_b == prev_mode:  # would have been same shot; force toggle
+                            body[i] = (s_b, e_b, "tight" if prev_mode in ("wide", "split") else "wide")
             seq = ([("opener", (opener[0], opener[1], "tight"))] if opener else []) + [("seg", b) for b in body]
             for k, (kind, sg) in enumerate(seq):
                 s, e, mode = sg
                 if kind == "seg" and first_mode_split and k == 0: mode = "split"
+                is_rehook = any(abs(s - rt) < 0.15 for rt in rh_times)
                 e = s + max(1, round((e - s) * fps)) / fps
-                items.append({"type": "clip", "src": clip["src"], "s": s, "e": e, "mode": mode})
+                seg_d = e - s
+                # Freeze-frame micro-pause before the rehook line
+                if is_rehook and items and items[-1]["type"] == "clip":
+                    items[-1]["pad"] = REHOOK_PAUSE
+                    t += REHOOK_PAUSE
+                items.append({"type": "clip", "src": clip["src"], "s": s, "e": e, "mode": mode, "rehook": is_rehook})
                 for w in words_between(words, s, e):
-                    ass.append({"w": w["w"], "s": t + (w["s"] - s), "e": t + (w["e"] - s)})
-                t += e - s
+                    ass.append({"w": w["w"], "s": t + (w["s"] - s), "e": t + (w["e"] - s), "rehook": is_rehook})
+                t += seg_d
             items.append({"type": "end", "png": str(endcard or (work / "endcard.png")), "dur": ec.get("dur", 2.8)})
             return items, ass, t
         name_base = f"{spec['prefix']}{n}"
         versions = {}
         if "A" in a.versions:
-            items, ass, body = mk_items()
+            items, ass, body = mk_items(rehooks=rh)
             hl = work / f"hl_{clip['id']}_A.png"; hw, hh = make_headline(hl, clip["headline"])
             ovs = [{"png": str(hl), "x": OVL_X, "y": head_y(hh), "start": 0.2, "end": 3.4},
                    {"png": str(work / "lowerthird.png"), "x": OVL_X, "y": head_y(lth), "start": 3.8, "end": 7.8}]
             versions["A_Master"] = (items, ovs, ass)
         if "B" in a.versions and "B" in clip.get("hooks", {}):
             hk = clip["hooks"]["B"]; op = snap(words, *hk["segment"])
-            items, ass, body = mk_items(opener=op)
+            items, ass, body = mk_items(opener=op, rehooks=rh)
             od = op[1] - op[0]
             hl = work / f"hl_{clip['id']}_B.png"; hw, hh = make_headline(hl, hk["headline"])
             ovs = [{"png": str(hl), "x": OVL_X, "y": HEAD_Y_TOP, "start": 0.1, "end": max(1.5, od - 0.1)},  # opener is a tight shot: face top is about y 460, so the headline goes above it
@@ -353,7 +397,7 @@ def main():
             versions["B_Hook-ColdOpen"] = (items, ovs, ass)
         if "C" in a.versions and "C" in clip.get("hooks", {}):
             hk = clip["hooks"]["C"]
-            items, ass, body = mk_items(first_mode_split=True)
+            items, ass, body = mk_items(first_mode_split=True, rehooks=rh)
             od = items[0]["e"] - items[0]["s"]
             hl = work / f"hl_{clip['id']}_C.png"; make_headline(hl, hk["headline"], size=72)
             ovs = [{"png": str(hl), "x": OVL_X, "y": HEAD_Y_TOP, "start": 0.1, "end": max(1.5, od - 0.1)},
@@ -379,18 +423,18 @@ def main():
                 h = v["hook"]
                 if h == "B":
                     hk = clip["hooks"]["B"]; op = snap(words, *hk["segment"])
-                    items, ass, _ = mk_items(opener=op, body=body, endcard=ecp); od = op[1] - op[0]
+                    items, ass, _ = mk_items(opener=op, body=body, endcard=ecp, rehooks=rh); od = op[1] - op[0]
                     hl = work / f"hl_{clip['id']}_{v['id']}.png"; make_headline(hl, hk["headline"])
                     ovs = [{"png": str(hl), "x": OVL_X, "y": HEAD_Y_TOP, "start": 0.1, "end": max(1.5, od - 0.1)},
                            {"png": str(work / "lowerthird.png"), "x": OVL_X, "y": head_y(lth), "start": od + 0.5, "end": od + 4.5}]
                 elif h == "C":
                     hk = clip["hooks"]["C"]
-                    items, ass, _ = mk_items(first_mode_split=True, body=body, endcard=ecp); od = items[0]["e"] - items[0]["s"]
+                    items, ass, _ = mk_items(first_mode_split=True, body=body, endcard=ecp, rehooks=rh); od = items[0]["e"] - items[0]["s"]
                     hl = work / f"hl_{clip['id']}_{v['id']}.png"; make_headline(hl, hk["headline"], size=72)
                     ovs = [{"png": str(hl), "x": OVL_X, "y": HEAD_Y_TOP, "start": 0.1, "end": max(1.5, od - 0.1)},
                            {"png": str(work / "lowerthird.png"), "x": OVL_X, "y": HEAD_Y_TOP, "start": od + 0.4, "end": od + 4.4}]
                 else:  # A
-                    items, ass, _ = mk_items(body=body, endcard=ecp)
+                    items, ass, _ = mk_items(body=body, endcard=ecp, rehooks=rh)
                     hl = work / f"hl_{clip['id']}_{v['id']}.png"; hw, hh = make_headline(hl, clip["headline"])
                     ovs = [{"png": str(hl), "x": OVL_X, "y": head_y(hh), "start": 0.2, "end": 3.4},
                            {"png": str(work / "lowerthird.png"), "x": OVL_X, "y": head_y(lth), "start": 3.8, "end": 7.8}]

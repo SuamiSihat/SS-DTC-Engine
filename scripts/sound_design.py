@@ -44,6 +44,10 @@ def build_sfx_plan(timeline, sfx_level_offset=0):
     for i, it in enumerate(items):
         if i > 0:
             events.append({"t": it["out_start"], "cat": "swipe", "label": f"segment cut @ {it['out_start']:.1f}s"})
+    # Rehook attention SFX (subtle rise at -24 dB; see skills/rehook)
+    rehooks = timeline.get("layout", {}).get("rehooks", [])
+    for rh in rehooks:
+        events.append({"t": rh["t"], "cat": "rise", "label": f"rehook @ {rh['t']:.1f}s", "level_override": -24})
     events.sort(key=lambda e: e["t"])
     filtered = []
     prev_t = -1.0
@@ -52,7 +56,7 @@ def build_sfx_plan(timeline, sfx_level_offset=0):
             filtered.append(ev)
             prev_t = ev["t"]
     for ev in filtered:
-        ev["level"] = DEFAULT_LEVELS.get(ev["cat"], -20) + sfx_level_offset
+        ev["level"] = ev.get("level_override", DEFAULT_LEVELS.get(ev["cat"], -20)) + sfx_level_offset
         ev["sfx"] = pick_sfx(ev["cat"])
     return filtered
 

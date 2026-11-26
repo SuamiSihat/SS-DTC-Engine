@@ -27,12 +27,52 @@ def hit(term, text):
     if not t: return False
     return re.search(r"(?<!\w)" + re.escape(t) + r"(?!\w)", text.lower()) is not None
 
+# --- Risk tier classification ---
+HIGH_POLICY = {"cure-guarantee", "impotence-treatment", "sexual-function"}
+
+def classify_risk(brand, out, has_doctor):
+    """Return (tier, reasons) where tier is 'block'|'high'|'medium'|'low'."""
+    reasons = []
+    btype = brand.get("type", "product")
+    n_block = sum(l == "BLOCK" for l, _ in out)
+    n_review = sum(l == "REVIEW" for l, _ in out)
+    policy_ids = set()
+    for _, m in out:
+        match = re.search(r"\[policy:([^\]]+)\]", m)
+        if match:
+            policy_ids.add(match.group(1))
+
+    if n_block:
+        reasons.append(f"{n_block} banned term(s) or gate failure(s)")
+        return "block", reasons
+
+    tier = "low"
+    hit_high = policy_ids & HIGH_POLICY
+    if hit_high:
+        tier = "high"
+        reasons.append(f"policy: {', '.join(sorted(hit_high))}")
+    if btype == "service" and has_doctor:
+        tier = "high"
+        reasons.append("doctor in service ad (MAB/MMC)")
+    if str(brand.get("claims_status", "")).startswith("TBC"):
+        tier = max(tier, "high", key=["low", "medium", "high"].index)
+        reasons.append("claims review pending")
+    if has_doctor and tier != "high":
+        tier = max(tier, "medium", key=["low", "medium", "high"].index)
+        reasons.append("doctor present")
+    if n_review and tier != "high":
+        tier = max(tier, "medium", key=["low", "medium", "high"].index)
+        reasons.append(f"{n_review} item(s) need human review")
+    return tier, reasons
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--brand", required=True)
     ap.add_argument("--texts")
     ap.add_argument("--doctor", nargs="?", const="", default=None, metavar="NAME", help="a doctor appears in the videos; give the doctor's name, e.g. --doctor \"Dr Amir\"")
     ap.add_argument("--json", action="store_true")
+    ap.add_argument("--risk", action="store_true", help="print only the risk tier (block/high/medium/low) for scripting")
     ap.add_argument("--no-policy", action="store_true", help="skip the Meta / Malaysia keyword screen (policy_rules.py)")
     a = ap.parse_args()
 
@@ -84,12 +124,21 @@ def main():
         if btype == "service" and a.doctor is not None:
             out.append(("REVIEW", "Doctor-led ad for a clinic service: MAB services guideline 4.2 and MMC Guideline V2/2025 (dissemination of information, including social media) limit promoting a practitioner. Brand owner and clinic compliance adviser must confirm."))
 
+    tier, tier_reasons = classify_risk(b, out, a.doctor is not None)
+    reason_str = "; ".join(tier_reasons) if tier_reasons else "no findings"
+
+    if a.risk:
+        print(tier)
+        sys.exit(1 if tier == "block" else 0)
     if a.json:
-        print(json.dumps([{"level": l, "msg": m} for l, m in out], indent=2, ensure_ascii=False))
+        print(json.dumps({"risk": tier, "risk_reasons": tier_reasons,
+                          "findings": [{"level": l, "msg": m} for l, m in out]},
+                         indent=2, ensure_ascii=False))
     else:
         for l, m in out: print(f"{l}: {m}")
-        print(f"\n{sum(l=='BLOCK' for l,_ in out)} BLOCK, {sum(l=='REVIEW' for l,_ in out)} REVIEW for brand '{a.brand}'.")
-    sys.exit(1 if any(l == "BLOCK" for l, _ in out) else 0)
+        print(f"\nRISK: {tier.upper()} ({reason_str})")
+        print(f"{sum(l=='BLOCK' for l,_ in out)} BLOCK, {sum(l=='REVIEW' for l,_ in out)} REVIEW for brand '{a.brand}'.")
+    sys.exit(1 if tier == "block" else 0)
 
 if __name__ == "__main__":
     main()

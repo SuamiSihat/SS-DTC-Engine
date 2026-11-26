@@ -217,6 +217,13 @@ def cmd_end(a):
         out_dir = ROOT / "batches" / a.batch / "renders"
     outs = scan(out_dir)
     d["output_dir"] = str(out_dir)
+    if a.asset_sha:
+        import hashlib
+        for o in outs:
+            fp = pathlib.Path(d["output_dir"]) / o["file"]
+            if fp.is_file():
+                h = hashlib.sha256(fp.read_bytes()).hexdigest()
+                o["sha256"] = h
     d["outputs"] = outs
     d["videos"] = sum(o["kind"] == "video" for o in outs)
     d["images"] = sum(o["kind"] == "image" for o in outs)
@@ -240,6 +247,29 @@ def cmd_tokens(a):
     print(f"tokens set for {a.batch}: output {tk['output_tokens']:,}, input {tk['input_tokens']:,}, "
           f"cache write {tk['cache_creation_input_tokens']:,}, cache read {tk['cache_read_input_tokens']:,}; "
           f"RUN LOG.md rewritten in {len(written)} place(s)")
+
+
+def cmd_kpi(a):
+    d = load(a.batch)
+    if "end" not in d:
+        sys.exit(f"Run 'run_log.py end {a.batch}' first.")
+    kpi = {"platform": a.platform or "all", "added": now().isoformat(timespec="seconds")}
+    if a.note:
+        kpi["note"] = a.note
+    KPI_KEYS = {"retention_3s", "completion_rate", "reach", "impressions", "leads",
+                "sales", "cost_per_lead", "engagement_rate", "saves", "shares"}
+    for p in a.pairs:
+        k, _, v = p.partition("=")
+        k = k.strip().lower().replace("-", "_")
+        if k not in KPI_KEYS:
+            sys.exit(f"Unknown KPI key '{k}'. Allowed: {', '.join(sorted(KPI_KEYS))}")
+        kpi[k] = float(v) if "." in v else int(v)
+    if len(kpi) <= 2:  # only platform + added
+        sys.exit("Give at least one KPI value, e.g. retention_3s=85 completion_rate=42")
+    d.setdefault("kpis", []).append(kpi)
+    save(a.batch, d)
+    _, written = write_md(a.batch, d)
+    print(f"KPI added for {a.batch} ({kpi['platform']}): {len(kpi) - 2} metrics; RUN LOG.md rewritten in {len(written)} place(s)")
 
 
 def per_raw(d):
@@ -273,9 +303,51 @@ def summary_md(d):
         lines.append("- Not recorded: no Claude Code session log for this repo in the run window (chat app, another PC or a "
                      f"remote session). Add it: `python scripts/run_log.py tokens {d['batch']} output=... input=... "
                      "cache_read=... cache_write=...`")
-    lines += ["", "## Outputs", "", "| File | Length | MB |", "|---|---|---|"]
-    lines += [f"| {o['file']} | {o.get('seconds') or ''}{'s' if o.get('seconds') else ''} | {o['mb']} |"
-              for o in d.get("outputs", [])]
+    kpis = d.get("kpis", [])
+    if kpis:
+        lines += ["", "## Performance", ""]
+        for ki, kpi in enumerate(kpis):
+            plat = kpi.get("platform", "all")
+            note = kpi.get("note", "")
+            header = f"**{plat}**" + (f" ({note})" if note else "")
+            lines.append(f"{header}:")
+            lines.append("")
+            lines.append("| Metric | Value |")
+            lines.append("|---|---|")
+            DISPLAY = {
+                "retention_3s": "Retention at 3s",
+                "completion_rate": "Completion rate",
+                "reach": "Reach",
+                "impressions": "Impressions",
+                "leads": "Leads",
+                "sales": "Sales",
+                "cost_per_lead": "Cost per lead (RM)",
+                "engagement_rate": "Engagement rate",
+                "saves": "Saves",
+                "shares": "Shares",
+            }
+            for mk, label in DISPLAY.items():
+                if mk in kpi:
+                    v = kpi[mk]
+                    if mk.endswith("_rate") or mk == "retention_3s":
+                        lines.append(f"| {label} | {v}% |")
+                    elif mk == "cost_per_lead":
+                        lines.append(f"| {label} | RM {v:.2f} |")
+                    elif isinstance(v, float):
+                        lines.append(f"| {label} | {v:,.1f} |")
+                    else:
+                        lines.append(f"| {label} | {v:,} |")
+            lines.append("")
+    has_sha = any(o.get("sha256") for o in d.get("outputs", []))
+    lines += ["", "## Outputs", ""]
+    if has_sha:
+        lines += ["| File | Length | MB | SHA256 |", "|---|---|---|---|"]
+        lines += [f"| {o['file']} | {o.get('seconds') or ''}{'s' if o.get('seconds') else ''} | {o['mb']} | `{o.get('sha256', '')[:12]}\u2026` |"
+                  for o in d.get("outputs", [])]
+    else:
+        lines += ["| File | Length | MB |", "|---|---|---|"]
+        lines += [f"| {o['file']} | {o.get('seconds') or ''}{'s' if o.get('seconds') else ''} | {o['mb']} |"
+                  for o in d.get("outputs", [])]
     return "\n".join(lines) + "\n"
 
 
@@ -286,15 +358,33 @@ def cmd_report(a):
         if "end" not in d:
             continue
         tk = d.get("tokens") or {}
-        rows.append((d["batch"], d["workflow"], d["raws"], d.get("videos", 0), d.get("images", 0),
-                     fmt_s(d.get("wall_seconds")), tk.get("output_tokens", "-"), tk.get("cache_read_input_tokens", "-")))
+        kpis = d.get("kpis", [])
+        latest_kpi = kpis[-1] if kpis else {}
+        rows.append({"batch": d["batch"], "workflow": d["workflow"], "raws": d["raws"],
+                     "videos": d.get("videos", 0), "images": d.get("images", 0),
+                     "time": fmt_s(d.get("wall_seconds")),
+                     "output_tok": tk.get("output_tokens", "-"),
+                     "cache_read": tk.get("cache_read_input_tokens", "-"),
+                     "retention_3s": latest_kpi.get("retention_3s"),
+                     "completion_rate": latest_kpi.get("completion_rate")})
     if not rows:
         print("No finished run logs yet.")
         return
-    print("| Batch | Workflow | Raws | Videos | Images | Time | Output tok | Cache read |")
-    print("|---|---|---|---|---|---|---|---|")
+    has_kpi = any(r["retention_3s"] is not None or r["completion_rate"] is not None for r in rows)
+    if has_kpi:
+        print("| Batch | Workflow | Raws | Videos | Images | Time | Output tok | Cache read | Retention 3s | Completion % |")
+        print("|---|---|---|---|---|---|---|---|---|---|")
+    else:
+        print("| Batch | Workflow | Raws | Videos | Images | Time | Output tok | Cache read |")
+        print("|---|---|---|---|---|---|---|---|")
     for r in rows:
-        print("| " + " | ".join(f"{x:,}" if isinstance(x, int) else str(x) for x in r) + " |")
+        base = [r["batch"], r["workflow"], r["raws"], r["videos"], r["images"],
+                r["time"], r["output_tok"], r["cache_read"]]
+        cells = [f"{x:,}" if isinstance(x, int) else str(x) for x in base]
+        if has_kpi:
+            cells.append(f"{r['retention_3s']}%" if r["retention_3s"] is not None else "-")
+            cells.append(f"{r['completion_rate']}%" if r["completion_rate"] is not None else "-")
+        print("| " + " | ".join(cells) + " |")
 
 
 def main():
@@ -310,14 +400,20 @@ def main():
     e.add_argument("--session", help="a specific Claude Code session .jsonl to count")
     e.add_argument("--tokens", nargs="+", metavar="KEY=N", help="enter totals by hand: output= input= cache_read= cache_write=")
     e.add_argument("--tokens-note", default="", help="where the hand-entered numbers came from")
+    e.add_argument("--asset-sha", action="store_true", help="compute SHA256 checksums for delivered files")
     k = sub.add_parser("tokens", help="set hand-entered token totals after 'end' and rewrite RUN LOG.md")
     k.add_argument("batch"); k.add_argument("pairs", nargs="+", metavar="KEY=N")
     k.add_argument("--note", default="", help="where the numbers came from, e.g. 'Claude app usage screen'")
+    kp = sub.add_parser("kpi", help="add post-launch performance metrics")
+    kp.add_argument("batch")
+    kp.add_argument("pairs", nargs="+", metavar="KEY=N")
+    kp.add_argument("--platform", default="", help="platform name, e.g. tiktok, instagram")
+    kp.add_argument("--note", default="", help="context, e.g. 'first 7 days', 'week 2'")
     sub.add_parser("report")
     a = ap.parse_args()
     if a.cmd == "time" and a.command and a.command[0] == "--":
         a.command = a.command[1:]
-    {"start": cmd_start, "time": cmd_time, "end": cmd_end, "tokens": cmd_tokens, "report": cmd_report}[a.cmd](a)
+    {"start": cmd_start, "time": cmd_time, "end": cmd_end, "tokens": cmd_tokens, "kpi": cmd_kpi, "report": cmd_report}[a.cmd](a)
 
 
 if __name__ == "__main__":
